@@ -46,10 +46,10 @@ const Booking = () => {
       
       <section className="gradient-hero py-16 text-center">
         <div className="container">
-          <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4">
+          <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
             Book Your Session
           </h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
+          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Take the first step towards complete relaxation and wellness.
           </p>
         </div>
@@ -57,7 +57,7 @@ const Booking = () => {
 
       <section className="py-16 bg-background">
         <div className="container max-w-2xl">
-          <Card className="shadow-gold">
+          <Card className="shadow-gold animate-scale-in" style={{ animationDelay: "0.3s" }}>
             <CardHeader>
               <CardTitle className="text-3xl font-serif">Reservation Details</CardTitle>
               <CardDescription className="text-base">
@@ -73,6 +73,7 @@ const Booking = () => {
                     placeholder="Enter your name"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
+                    className="transition-smooth focus:scale-[1.01]"
                     required
                   />
                 </div>
@@ -85,6 +86,7 @@ const Booking = () => {
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
+                    className="transition-smooth focus:scale-[1.01]"
                     required
                   />
                 </div>
@@ -151,7 +153,7 @@ const Booking = () => {
                   </Select>
                 </div>
 
-                <Button type="submit" variant="accent" size="lg" className="w-full">
+                <Button type="submit" variant="accent" size="lg" className="w-full transition-elegant hover:scale-[1.02]">
                   Confirm Booking
                 </Button>
               </form>

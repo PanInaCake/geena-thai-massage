@@ -36,8 +36,8 @@ const PackageCard = ({ title, description, duration, price, image, features }: P
           </div>
           <ul className="space-y-2">
             {features.map((feature, index) => (
-              <li key={index} className="flex items-center gap-2 text-sm">
-                <span className="text-accent">✓</span>
+              <li key={index} className="flex items-center gap-2 text-sm transition-smooth hover:translate-x-1">
+                <span className="text-accent transition-smooth">✓</span>
                 {feature}
               </li>
             ))}
@@ -46,7 +46,7 @@ const PackageCard = ({ title, description, duration, price, image, features }: P
       </CardContent>
       <CardFooter>
         <Link to="/booking" className="w-full">
-          <Button variant="accent" size="lg" className="w-full">
+          <Button variant="accent" size="lg" className="w-full transition-elegant hover:scale-[1.02]">
             Book This Package
           </Button>
         </Link>

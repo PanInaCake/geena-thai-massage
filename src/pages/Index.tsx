@@ -54,10 +54,10 @@ const Index = () => {
       {/* Hero Section */}
       <section className="gradient-hero py-20 text-center">
         <div className="container">
-          <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             Experience Ultimate Relaxation
           </h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Discover our signature massage packages designed to rejuvenate your body, mind, and spirit.
           </p>
         </div>
@@ -75,7 +75,13 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
-              <PackageCard key={index} {...pkg} />
+              <div 
+                key={index} 
+                className="animate-scale-in"
+                style={{ animationDelay: `${index * 0.1}s`, animationFillMode: "backwards" }}
+              >
+                <PackageCard {...pkg} />
+              </div>
             ))}
           </div>
         </div>

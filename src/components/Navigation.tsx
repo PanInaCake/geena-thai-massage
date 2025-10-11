@@ -18,6 +18,7 @@ const Navigation = () => {
             <Button 
               variant={location.pathname === "/" ? "secondary" : "ghost"}
               size="sm"
+              className="transition-smooth"
             >
               Packages
             </Button>
@@ -26,6 +27,7 @@ const Navigation = () => {
             <Button 
               variant={location.pathname === "/booking" ? "accent" : "ghost"}
               size="sm"
+              className="transition-smooth"
             >
               Book Now
             </Button>
