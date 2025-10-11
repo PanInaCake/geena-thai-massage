@@ -6,16 +6,16 @@ import massage3 from "@/assets/massage-3.jpg";
 
 const packages = [
   {
-    title: "Swedish Relaxation",
-    description: "A gentle, flowing massage designed to promote deep relaxation and ease muscle tension.",
+    title: "Traditional Thai Massage",
+    description: "Ancient healing art combining acupressure, stretching, and rhythmic compression for total body renewal.",
     duration: "60 minutes",
     price: "$95",
     image: massage1,
     features: [
-      "Full body massage",
-      "Swedish massage techniques",
-      "Aromatherapy oils included",
-      "Relaxing environment"
+      "Full body treatment",
+      "Stretching techniques",
+      "Pressure point therapy",
+      "Energy line focus"
     ]
   },
   {
