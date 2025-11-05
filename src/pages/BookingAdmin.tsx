@@ -52,7 +52,6 @@ const BookingAdmin = () => {
       setBookings(data || []);
       toast.success("Access granted!");
     } catch (error) {
-      console.error("Access error:", error);
       toast.error("Invalid access code");
       setIsAuthorized(false);
     } finally {
