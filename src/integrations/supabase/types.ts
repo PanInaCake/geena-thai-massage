@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_access_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_date: string
@@ -49,7 +70,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_config: {
+        Args: { setting_name: string; setting_value: string }
+        Returns: undefined
+      }
+      verify_booking_access: { Args: { access_code: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
