@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Booking = () => {
   const [date, setDate] = useState<Date>();
@@ -20,8 +21,34 @@ const Booking = () => {
     package: "",
     time: "",
   });
+  const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fetch existing bookings when date changes
+  useEffect(() => {
+    if (date) {
+      fetchBookedSlots(date);
+    }
+  }, [date]);
+
+  const fetchBookedSlots = async (selectedDate: Date) => {
+    try {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("booking_time")
+        .eq("booking_date", formattedDate);
+
+      if (error) throw error;
+
+      const slots = new Set(data?.map(booking => booking.booking_time) || []);
+      setBookedSlots(slots);
+    } catch (error) {
+      console.error("Error fetching booked slots:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.email || !formData.package || !date || !formData.time) {
@@ -29,11 +56,46 @@ const Booking = () => {
       return;
     }
 
-    toast.success("Booking submitted successfully! We'll contact you soon.");
-    
-    // Reset form
-    setFormData({ name: "", email: "", package: "", time: "" });
-    setDate(undefined);
+    setLoading(true);
+
+    try {
+      const formattedDate = format(date, "yyyy-MM-dd");
+
+      // Insert booking into database
+      const { error } = await supabase
+        .from("bookings")
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          package: formData.package,
+          booking_date: formattedDate,
+          booking_time: formData.time,
+        });
+
+      if (error) {
+        // Check if error is due to unique constraint violation (double booking)
+        if (error.code === "23505") {
+          toast.error("This time slot is no longer available. Please choose another time.");
+          // Refresh the booked slots
+          await fetchBookedSlots(date);
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      toast.success("Booking confirmed! We'll contact you soon.");
+      
+      // Reset form
+      setFormData({ name: "", email: "", package: "", time: "" });
+      setDate(undefined);
+      setBookedSlots(new Set());
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      toast.error("Failed to create booking. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -140,21 +202,45 @@ const Booking = () => {
                       <SelectValue placeholder="Choose a time slot" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="9am">9:00 AM</SelectItem>
-                      <SelectItem value="10am">10:00 AM</SelectItem>
-                      <SelectItem value="11am">11:00 AM</SelectItem>
-                      <SelectItem value="12pm">12:00 PM</SelectItem>
-                      <SelectItem value="1pm">1:00 PM</SelectItem>
-                      <SelectItem value="2pm">2:00 PM</SelectItem>
-                      <SelectItem value="3pm">3:00 PM</SelectItem>
-                      <SelectItem value="4pm">4:00 PM</SelectItem>
-                      <SelectItem value="5pm">5:00 PM</SelectItem>
+                      <SelectItem value="9am" disabled={bookedSlots.has("9am")}>
+                        9:00 AM {bookedSlots.has("9am") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="10am" disabled={bookedSlots.has("10am")}>
+                        10:00 AM {bookedSlots.has("10am") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="11am" disabled={bookedSlots.has("11am")}>
+                        11:00 AM {bookedSlots.has("11am") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="12pm" disabled={bookedSlots.has("12pm")}>
+                        12:00 PM {bookedSlots.has("12pm") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="1pm" disabled={bookedSlots.has("1pm")}>
+                        1:00 PM {bookedSlots.has("1pm") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="2pm" disabled={bookedSlots.has("2pm")}>
+                        2:00 PM {bookedSlots.has("2pm") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="3pm" disabled={bookedSlots.has("3pm")}>
+                        3:00 PM {bookedSlots.has("3pm") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="4pm" disabled={bookedSlots.has("4pm")}>
+                        4:00 PM {bookedSlots.has("4pm") && "(Booked)"}
+                      </SelectItem>
+                      <SelectItem value="5pm" disabled={bookedSlots.has("5pm")}>
+                        5:00 PM {bookedSlots.has("5pm") && "(Booked)"}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <Button type="submit" variant="accent" size="lg" className="w-full transition-elegant hover:scale-[1.02]">
-                  Confirm Booking
+                <Button 
+                  type="submit" 
+                  variant="accent" 
+                  size="lg" 
+                  className="w-full transition-elegant hover:scale-[1.02]"
+                  disabled={loading}
+                >
+                  {loading ? "Processing..." : "Confirm Booking"}
                 </Button>
               </form>
             </CardContent>
