@@ -14,27 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      booking_access_codes: {
-        Row: {
-          code: string
-          created_at: string
-          id: string
-          name: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          id?: string
-          name: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       bookings: {
         Row: {
           booking_date: string
@@ -65,19 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      set_config: {
-        Args: { setting_name: string; setting_value: string }
-        Returns: undefined
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
-      verify_booking_access: { Args: { access_code: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -204,6 +206,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

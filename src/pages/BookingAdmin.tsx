@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -19,48 +18,65 @@ interface Booking {
 }
 
 const BookingAdmin = () => {
-  const [accessCode, setAccessCode] = useState("");
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
-  const handleAccessSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  useEffect(() => {
+    checkAuthAndFetchBookings();
+  }, []);
 
+  const checkAuthAndFetchBookings = async () => {
     try {
-      // Set the access code in the session
-      await supabase.rpc('set_config', {
-        setting_name: 'app.access_code',
-        setting_value: accessCode
-      });
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Please log in to access this page");
+        navigate("/admin/login");
+        return;
+      }
 
-      // Try to fetch bookings to verify access
+      // Check if user has admin role
+      const { data: isAdminUser, error: roleError } = await supabase
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+
+      if (roleError || !isAdminUser) {
+        toast.error("Access denied - Admin privileges required");
+        await supabase.auth.signOut();
+        navigate("/admin/login");
+        return;
+      }
+
+      setIsAdmin(true);
+
+      // Fetch bookings
       const { data, error } = await supabase
         .from("bookings")
         .select("*")
         .order("booking_date", { ascending: true })
         .order("booking_time", { ascending: true });
 
-      if (error) {
-        toast.error("Invalid access code");
-        setIsAuthorized(false);
-        return;
-      }
+      if (error) throw error;
 
-      setIsAuthorized(true);
       setBookings(data || []);
-      toast.success("Access granted!");
     } catch (error) {
-      toast.error("Invalid access code");
-      setIsAuthorized(false);
+      toast.error("Failed to load bookings");
+      navigate("/admin/login");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out successfully");
+    navigate("/admin/login");
+  };
+
   useEffect(() => {
-    if (isAuthorized) {
+    if (isAdmin) {
       // Set up realtime subscription for bookings
       const channel = supabase
         .channel('bookings-changes')
@@ -88,62 +104,23 @@ const BookingAdmin = () => {
         supabase.removeChannel(channel);
       };
     }
-  }, [isAuthorized]);
+  }, [isAdmin]);
 
-  if (!isAuthorized) {
+  if (loading) {
     return (
       <div className="min-h-screen">
         <Navigation />
-        
-        <section className="gradient-hero py-16 text-center">
-          <div className="container">
-            <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
-              Booking Management
-            </h1>
-            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-              Enter your access code to view and manage bookings
-            </p>
-          </div>
-        </section>
-
         <section className="py-16 bg-background">
-          <div className="container max-w-md">
-            <Card className="shadow-gold animate-scale-in">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif">Access Required</CardTitle>
-                <CardDescription>
-                  Please enter your protection code to continue
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleAccessSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="accessCode">Access Code</Label>
-                    <Input
-                      id="accessCode"
-                      type="password"
-                      placeholder="Enter access code"
-                      value={accessCode}
-                      onChange={(e) => setAccessCode(e.target.value)}
-                      className="transition-smooth focus:scale-[1.01]"
-                      required
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    variant="accent" 
-                    className="w-full transition-elegant hover:scale-[1.02]"
-                    disabled={loading}
-                  >
-                    {loading ? "Verifying..." : "Access Bookings"}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+          <div className="container text-center">
+            <p className="text-muted-foreground">Loading...</p>
           </div>
         </section>
       </div>
     );
+  }
+
+  if (!isAdmin) {
+    return null;
   }
 
   return (
@@ -151,13 +128,23 @@ const BookingAdmin = () => {
       <Navigation />
       
       <section className="gradient-hero py-16 text-center">
-        <div className="container">
-          <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
-            All Bookings
-          </h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Manage your massage appointments
-          </p>
+        <div className="container flex justify-between items-center">
+          <div className="flex-1">
+            <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
+              All Bookings
+            </h1>
+            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+              Manage your massage appointments
+            </p>
+          </div>
+          <Button 
+            onClick={handleSignOut}
+            variant="outline" 
+            className="animate-fade-in"
+            style={{ animationDelay: "0.3s" }}
+          >
+            Sign Out
+          </Button>
         </div>
       </section>
 
