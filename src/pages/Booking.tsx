@@ -12,6 +12,29 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+// Validation schema
+const ALLOWED_PACKAGES = ["swedish", "hotstone", "aromatherapy"] as const;
+const ALLOWED_TIME_SLOTS = ["9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm"] as const;
+
+const bookingSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  email: z.string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email must be less than 255 characters"),
+  package: z.enum(ALLOWED_PACKAGES, {
+    errorMap: () => ({ message: "Please select a valid package" })
+  }),
+  time: z.enum(ALLOWED_TIME_SLOTS, {
+    errorMap: () => ({ message: "Please select a valid time slot" })
+  }),
+});
 
 const Booking = () => {
   const [date, setDate] = useState<Date>();
@@ -44,15 +67,24 @@ const Booking = () => {
       const slots = new Set(data?.map(booking => booking.booking_time) || []);
       setBookedSlots(slots);
     } catch (error) {
-      console.error("Error fetching booked slots:", error);
+      // Silently fail - user can try selecting date again
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.package || !date || !formData.time) {
-      toast.error("Please fill in all fields");
+    if (!date) {
+      toast.error("Please select a date");
+      return;
+    }
+
+    // Validate all inputs
+    const validation = bookingSchema.safeParse(formData);
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
 
@@ -60,16 +92,17 @@ const Booking = () => {
 
     try {
       const formattedDate = format(date, "yyyy-MM-dd");
+      const validatedData = validation.data;
 
-      // Insert booking into database
+      // Insert booking into database with validated data
       const { error } = await supabase
         .from("bookings")
         .insert({
-          name: formData.name,
-          email: formData.email,
-          package: formData.package,
+          name: validatedData.name,
+          email: validatedData.email,
+          package: validatedData.package,
           booking_date: formattedDate,
-          booking_time: formData.time,
+          booking_time: validatedData.time,
         });
 
       if (error) {
@@ -79,7 +112,7 @@ const Booking = () => {
           // Refresh the booked slots
           await fetchBookedSlots(date);
         } else {
-          throw error;
+          toast.error("Failed to create booking. Please try again.");
         }
         return;
       }
@@ -91,7 +124,6 @@ const Booking = () => {
       setDate(undefined);
       setBookedSlots(new Set());
     } catch (error) {
-      console.error("Error creating booking:", error);
       toast.error("Failed to create booking. Please try again.");
     } finally {
       setLoading(false);
