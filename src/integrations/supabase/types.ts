@@ -23,6 +23,7 @@ export type Database = {
           id: string
           name: string
           package: string
+          user_id: string | null
         }
         Insert: {
           booking_date: string
@@ -32,6 +33,7 @@ export type Database = {
           id?: string
           name: string
           package: string
+          user_id?: string | null
         }
         Update: {
           booking_date?: string
@@ -41,6 +43,7 @@ export type Database = {
           id?: string
           name?: string
           package?: string
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,6 +47,24 @@ const Booking = () => {
   });
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast.error("Please log in to make a booking");
+      navigate("/auth");
+      return;
+    }
+    
+    setUserId(user.id);
+  };
 
   // Fetch existing bookings when date changes
   useEffect(() => {
@@ -98,6 +117,7 @@ const Booking = () => {
       const { error } = await supabase
         .from("bookings")
         .insert({
+          user_id: userId,
           name: validatedData.name,
           email: validatedData.email,
           package: validatedData.package,
