@@ -47,6 +47,7 @@ const Booking = () => {
   });
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -55,15 +56,19 @@ const Booking = () => {
   }, []);
 
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      toast.error("Please log in to make a booking");
-      navigate("/auth");
-      return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Please log in to make a booking");
+        navigate("/auth");
+        return;
+      }
+      
+      setUserId(user.id);
+    } finally {
+      setAuthLoading(false);
     }
-    
-    setUserId(user.id);
   };
 
   // Fetch existing bookings when date changes
@@ -153,6 +158,26 @@ const Booking = () => {
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen">
+        <Navigation />
+        <section className="gradient-hero py-16 text-center">
+          <div className="container">
+            <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4">
+              Book Your Session
+            </h1>
+          </div>
+        </section>
+        <section className="py-16 bg-background">
+          <div className="container max-w-2xl flex items-center justify-center">
+            <p className="text-lg text-muted-foreground">Verifying authentication...</p>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
