@@ -7,43 +7,100 @@ import lotusIcon from "@/assets/lotus-icon.jpg";
 
 const packages = [
   {
-    title: "Traditional Thai Massage",
-    description: "Ancient healing art combining acupressure, stretching, and rhythmic compression for total body renewal.",
-    duration: "60 minutes",
-    price: "$95",
-    image: massage1,
-    features: [
-      "Full body treatment",
-      "Stretching techniques",
-      "Pressure point therapy",
-      "Energy line focus"
-    ]
+    title: "Thai Massage (No Oil)",
+    description: "Traditional Thai massage using acupressure and stretching techniques without oil.",
+    pricing: [
+      { duration: "60 minutes", price: "$95" },
+      { duration: "90 minutes", price: "$130" },
+      { duration: "120 minutes", price: "$160" }
+    ],
+    image: massage1
   },
   {
-    title: "Hot Stone Therapy",
-    description: "Warm volcanic stones melt away tension and stress, promoting deep muscle relaxation.",
-    duration: "90 minutes",
-    price: "$145",
-    image: massage2,
-    features: [
-      "Heated volcanic stones",
-      "Deep tissue techniques",
-      "Extended session time",
-      "Premium oils & lotions"
-    ]
+    title: "Thai Massage (With Oil)",
+    description: "Traditional Thai massage enhanced with therapeutic oils for smooth, flowing movements.",
+    pricing: [
+      { duration: "60 minutes", price: "$95" },
+      { duration: "90 minutes", price: "$130" },
+      { duration: "120 minutes", price: "$160" }
+    ],
+    image: massage2
   },
   {
-    title: "Aromatherapy Bliss",
-    description: "Indulge in a therapeutic massage enhanced with custom-blended essential oils for ultimate wellness.",
-    duration: "75 minutes",
-    price: "$120",
-    image: massage3,
-    features: [
-      "Custom essential oil blend",
-      "Therapeutic massage",
-      "Stress relief focus",
-      "Complimentary tea service"
-    ]
+    title: "Deep Oil Massage",
+    description: "Intense deep tissue massage with oil to relieve chronic muscle tension and knots.",
+    pricing: [
+      { duration: "60 minutes", price: "$95" },
+      { duration: "90 minutes", price: "$130" },
+      { duration: "120 minutes", price: "$160" }
+    ],
+    image: massage3
+  },
+  {
+    title: "Aromatherapy Massage",
+    description: "Relaxing massage with custom-blended aromatherapy oils for ultimate stress relief.",
+    pricing: [
+      { duration: "60 minutes", price: "$95" },
+      { duration: "90 minutes", price: "$130" },
+      { duration: "120 minutes", price: "$160" }
+    ],
+    image: massage1
+  },
+  {
+    title: "Back, Neck & Shoulder Massage",
+    description: "Targeted relief for office syndrome, focusing on upper body tension and stress.",
+    pricing: [
+      { duration: "30 minutes", price: "$55" },
+      { duration: "45 minutes", price: "$70" },
+      { duration: "60 minutes", price: "$95" }
+    ],
+    image: massage2
+  },
+  {
+    title: "Head Massage",
+    description: "Soothing head massage to relieve tension headaches and promote mental clarity.",
+    pricing: [
+      { duration: "30 minutes", price: "$55" },
+      { duration: "45 minutes", price: "$70" },
+      { duration: "60 minutes", price: "$95" }
+    ],
+    image: massage3
+  },
+  {
+    title: "Foot Massage",
+    description: "Therapeutic foot massage focusing on pressure points to restore energy flow.",
+    pricing: [
+      { duration: "30 minutes", price: "$55" },
+      { duration: "45 minutes", price: "$70" },
+      { duration: "60 minutes", price: "$95" }
+    ],
+    image: massage1
+  },
+  {
+    title: "Foot Spa + Foot Massage",
+    description: "Luxurious foot spa treatment followed by a relaxing foot massage.",
+    pricing: [
+      { duration: "60 minutes", price: "$95" }
+    ],
+    image: massage2
+  },
+  {
+    title: "Back Scrub + Massage",
+    description: "Exfoliating back scrub followed by a soothing massage for smooth, refreshed skin.",
+    pricing: [
+      { duration: "45 minutes", price: "$95" }
+    ],
+    image: massage3
+  },
+  {
+    title: "Therapeutic Massage",
+    description: "Focus on problem areas throughout the entire body for targeted pain relief and recovery.",
+    pricing: [
+      { duration: "60 minutes", price: "$105" },
+      { duration: "90 minutes", price: "$140" },
+      { duration: "120 minutes", price: "$170" }
+    ],
+    image: massage1
   }
 ];
 

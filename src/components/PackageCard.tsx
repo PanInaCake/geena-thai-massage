@@ -2,16 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
+interface PricingOption {
+  duration: string;
+  price: string;
+}
+
 interface PackageCardProps {
   title: string;
   description: string;
-  duration: string;
-  price: string;
+  pricing: PricingOption[];
   image: string;
-  features: string[];
+  features?: string[];
 }
 
-const PackageCard = ({ title, description, duration, price, image, features }: PackageCardProps) => {
+const PackageCard = ({ title, description, pricing, image, features }: PackageCardProps) => {
   return (
     <Card className="overflow-hidden shadow-soft hover:shadow-gold transition-all duration-300 hover:-translate-y-1">
       <div className="aspect-video overflow-hidden">
@@ -22,26 +26,29 @@ const PackageCard = ({ title, description, duration, price, image, features }: P
         />
       </div>
       <CardHeader>
-        <div className="flex justify-between items-start mb-2">
-          <CardTitle className="text-2xl font-serif">{title}</CardTitle>
-          <span className="text-2xl font-bold text-accent">{price}</span>
-        </div>
+        <CardTitle className="text-2xl font-serif mb-2">{title}</CardTitle>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="font-medium">Duration:</span>
-            <span>{duration}</span>
-          </div>
-          <ul className="space-y-2">
-            {features.map((feature, index) => (
-              <li key={index} className="flex items-center gap-2 text-sm transition-smooth hover:translate-x-1">
-                <span className="text-accent transition-smooth">✓</span>
-                {feature}
-              </li>
+          <div className="space-y-2">
+            {pricing.map((option, index) => (
+              <div key={index} className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">{option.duration}</span>
+                <span className="font-bold text-accent text-lg">{option.price}</span>
+              </div>
             ))}
-          </ul>
+          </div>
+          {features && features.length > 0 && (
+            <ul className="space-y-2 pt-2 border-t border-border">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-center gap-2 text-sm transition-smooth hover:translate-x-1">
+                  <span className="text-accent transition-smooth">✓</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </CardContent>
       <CardFooter>
