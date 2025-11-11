@@ -13,6 +13,7 @@ interface Booking {
   booking_date: string;
   booking_time: string;
   created_at: string;
+  notes: string | null;
 }
 
 const MyBookings = () => {
@@ -150,6 +151,12 @@ const MyBookings = () => {
                                 </p>
                               </div>
                             </div>
+                            {booking.notes && (
+                              <div className="mt-4 pt-4 border-t">
+                                <p className="text-sm text-muted-foreground mb-1">Notes</p>
+                                <p className="text-sm">{booking.notes}</p>
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       ))}

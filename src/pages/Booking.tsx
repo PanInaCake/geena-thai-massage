@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
@@ -44,6 +45,7 @@ const Booking = () => {
     email: "",
     package: "",
     time: "",
+    notes: "",
   });
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -128,6 +130,7 @@ const Booking = () => {
           package: validatedData.package,
           booking_date: formattedDate,
           booking_time: validatedData.time,
+          notes: formData.notes || null,
         });
 
       if (error) {
@@ -145,7 +148,7 @@ const Booking = () => {
       toast.success("Booking confirmed! We'll contact you soon.");
       
       // Reset form
-      setFormData({ name: "", email: "", package: "", time: "" });
+      setFormData({ name: "", email: "", package: "", time: "", notes: "" });
       setDate(undefined);
       setBookedSlots(new Set());
     } catch (error) {
@@ -310,8 +313,19 @@ const Booking = () => {
                   </Select>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Additional Notes (Optional)</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="Any special requests or preferences..."
+                    value={formData.notes}
+                    onChange={(e) => handleChange("notes", e.target.value)}
+                    className="transition-smooth focus:scale-[1.01] min-h-[100px]"
+                  />
+                </div>
+
                 <Button 
-                  type="submit" 
+                  type="submit"
                   variant="accent" 
                   size="lg" 
                   className="w-full transition-elegant hover:scale-[1.02]"
