@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 interface Booking {
   id: string;
@@ -17,6 +18,7 @@ interface Booking {
 const MyBookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +51,12 @@ const MyBookings = () => {
       setLoading(false);
     }
   };
+
+  const bookedDates = bookings.map(b => new Date(b.booking_date));
+  
+  const selectedDateBookings = bookings.filter(booking => 
+    selectedDate && isSameDay(new Date(booking.booking_date), selectedDate)
+  );
 
   if (loading) {
     return (
@@ -90,32 +98,75 @@ const MyBookings = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
-              {bookings.map((booking) => (
-                <Card key={booking.id} className="shadow-gold transition-elegant hover:scale-[1.01]">
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Package</p>
-                        <p className="font-semibold capitalize">{booking.package}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Date & Time</p>
-                        <p className="font-semibold">
-                          {format(new Date(booking.booking_date), "MMM dd, yyyy")}
-                        </p>
-                        <p className="text-sm">{booking.booking_time}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Booked on</p>
-                        <p className="text-sm">
-                          {format(new Date(booking.created_at), "MMM dd, yyyy")}
-                        </p>
-                      </div>
+            <div className="grid gap-6">
+              <Card className="shadow-gold">
+                <CardHeader>
+                  <CardTitle>Select a Date</CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-center">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    modifiers={{
+                      booked: bookedDates
+                    }}
+                    modifiersStyles={{
+                      booked: {
+                        fontWeight: "bold",
+                        textDecoration: "underline"
+                      }
+                    }}
+                    className="rounded-md border"
+                  />
+                </CardContent>
+              </Card>
+
+              {selectedDate && selectedDateBookings.length > 0 && (
+                <Card className="shadow-gold">
+                  <CardHeader>
+                    <CardTitle>
+                      Bookings for {format(selectedDate, "MMMM dd, yyyy")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4">
+                      {selectedDateBookings.map((booking) => (
+                        <Card key={booking.id} className="transition-elegant hover:scale-[1.01]">
+                          <CardContent className="p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">Package</p>
+                                <p className="font-semibold capitalize">{booking.package}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">Time</p>
+                                <p className="font-semibold">{booking.booking_time}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-1">Booked on</p>
+                                <p className="text-sm">
+                                  {format(new Date(booking.created_at), "MMM dd, yyyy")}
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              )}
+
+              {selectedDate && selectedDateBookings.length === 0 && (
+                <Card className="shadow-gold">
+                  <CardContent className="py-12 text-center">
+                    <p className="text-muted-foreground">
+                      No bookings for {format(selectedDate, "MMMM dd, yyyy")}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           )}
         </div>
