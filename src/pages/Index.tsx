@@ -3,7 +3,7 @@ import PackageCard from "@/components/PackageCard";
 import massage1 from "@/assets/massage-1.jpg";
 import massage2 from "@/assets/massage-2.jpg";
 import massage3 from "@/assets/massage-3.jpg";
-import lotusIcon from "@/assets/lotus-icon.jpg";
+import logo from "@/assets/logo.jpg";
 
 const packages = [
   {
@@ -113,18 +113,18 @@ const Index = () => {
       <section className="gradient-hero py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-32 h-32 rotate-12">
-            <img src={lotusIcon} alt="" className="w-full h-full object-contain animate-pulse" />
+            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" />
           </div>
           <div className="absolute bottom-10 right-10 w-40 h-40 -rotate-12">
-            <img src={lotusIcon} alt="" className="w-full h-full object-contain animate-pulse" style={{ animationDelay: "1s" }} />
+            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" style={{ animationDelay: "1s" }} />
           </div>
           <div className="absolute top-1/2 left-1/4 w-24 h-24 rotate-45">
-            <img src={lotusIcon} alt="" className="w-full h-full object-contain animate-pulse" style={{ animationDelay: "0.5s" }} />
+            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" style={{ animationDelay: "0.5s" }} />
           </div>
         </div>
         <div className="container relative z-10">
           <div className="inline-block mb-6 animate-scale-in">
-            <img src={lotusIcon} alt="Lotus" className="w-20 h-20 mx-auto" />
+            <img src={logo} alt="Geena Thai Massage Logo" className="w-20 h-20 mx-auto object-cover" />
           </div>
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             Experience Ultimate Relaxation
@@ -156,7 +156,7 @@ const Index = () => {
             <div className="inline-block mb-4">
               <div className="flex items-center gap-3">
                 <div className="h-px w-12 bg-accent"></div>
-                <img src={lotusIcon} alt="" className="w-12 h-12" />
+                <img src={logo} alt="" className="w-12 h-12 object-cover" />
                 <div className="h-px w-12 bg-accent"></div>
               </div>
             </div>
