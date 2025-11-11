@@ -21,20 +21,18 @@ const ALLOWED_PACKAGES = ["swedish", "hotstone", "aromatherapy"] as const;
 const ALLOWED_TIME_SLOTS = ["9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm"] as const;
 
 const bookingSchema = z.object({
-  name: z.string()
+  name: z
+    .string()
     .trim()
     .min(1, "Name is required")
     .max(100, "Name must be less than 100 characters")
     .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
-  email: z.string()
-    .trim()
-    .email("Invalid email address")
-    .max(255, "Email must be less than 255 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
   package: z.enum(ALLOWED_PACKAGES, {
-    errorMap: () => ({ message: "Please select a valid package" })
+    errorMap: () => ({ message: "Please select a valid package" }),
   }),
   time: z.enum(ALLOWED_TIME_SLOTS, {
-    errorMap: () => ({ message: "Please select a valid time slot" })
+    errorMap: () => ({ message: "Please select a valid time slot" }),
   }),
 });
 
@@ -59,14 +57,16 @@ const Booking = () => {
 
   const checkAuth = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         toast.error("Please log in to make a booking");
         navigate("/auth");
         return;
       }
-      
+
       setUserId(user.id);
     } finally {
       setAuthLoading(false);
@@ -83,14 +83,11 @@ const Booking = () => {
   const fetchBookedSlots = async (selectedDate: Date) => {
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("booking_time")
-        .eq("booking_date", formattedDate);
+      const { data, error } = await supabase.from("bookings").select("booking_time").eq("booking_date", formattedDate);
 
       if (error) throw error;
 
-      const slots = new Set(data?.map(booking => booking.booking_time) || []);
+      const slots = new Set(data?.map((booking) => booking.booking_time) || []);
       setBookedSlots(slots);
     } catch (error) {
       // Silently fail - user can try selecting date again
@@ -99,7 +96,7 @@ const Booking = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!date) {
       toast.error("Please select a date");
       return;
@@ -107,7 +104,7 @@ const Booking = () => {
 
     // Validate all inputs
     const validation = bookingSchema.safeParse(formData);
-    
+
     if (!validation.success) {
       const firstError = validation.error.errors[0];
       toast.error(firstError.message);
@@ -121,17 +118,15 @@ const Booking = () => {
       const validatedData = validation.data;
 
       // Insert booking into database with validated data
-      const { error } = await supabase
-        .from("bookings")
-        .insert({
-          user_id: userId,
-          name: validatedData.name,
-          email: validatedData.email,
-          package: validatedData.package,
-          booking_date: formattedDate,
-          booking_time: validatedData.time,
-          notes: formData.notes || null,
-        });
+      const { error } = await supabase.from("bookings").insert({
+        user_id: userId,
+        name: validatedData.name,
+        email: validatedData.email,
+        package: validatedData.package,
+        booking_date: formattedDate,
+        booking_time: validatedData.time,
+        notes: formData.notes || null,
+      });
 
       if (error) {
         // Check if error is due to unique constraint violation (double booking)
@@ -146,7 +141,7 @@ const Booking = () => {
       }
 
       toast.success("Booking confirmed! We'll contact you soon.");
-      
+
       // Reset form
       setFormData({ name: "", email: "", package: "", time: "", notes: "" });
       setDate(undefined);
@@ -159,7 +154,7 @@ const Booking = () => {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   if (authLoading) {
@@ -168,9 +163,7 @@ const Booking = () => {
         <Navigation />
         <section className="gradient-hero py-16 text-center">
           <div className="container">
-            <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4">
-              Book Your Session
-            </h1>
+            <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4">Book Your Session</h1>
           </div>
         </section>
         <section className="py-16 bg-background">
@@ -185,13 +178,16 @@ const Booking = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
-      
+
       <section className="gradient-hero py-16 text-center">
         <div className="container">
           <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
             Book Your Session
           </h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          <p
+            className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             Take the first step towards complete relaxation and wellness.
           </p>
         </div>
@@ -253,10 +249,7 @@ const Booking = () => {
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !date && "text-muted-foreground"
-                        )}
+                        className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -317,17 +310,17 @@ const Booking = () => {
                   <Label htmlFor="notes">Additional Notes (Optional)</Label>
                   <Textarea
                     id="notes"
-                    placeholder="Any special requests or preferences..."
+                    placeholder="Any special requests or preferences e.g. Back pain, Shoulder pain"
                     value={formData.notes}
                     onChange={(e) => handleChange("notes", e.target.value)}
                     className="transition-smooth focus:scale-[1.01] min-h-[100px]"
                   />
                 </div>
 
-                <Button 
+                <Button
                   type="submit"
-                  variant="accent" 
-                  size="lg" 
+                  variant="accent"
+                  size="lg"
                   className="w-full transition-elegant hover:scale-[1.02]"
                   disabled={loading}
                 >
