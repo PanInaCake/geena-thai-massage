@@ -9,6 +9,8 @@ import { format, isSameDay } from "date-fns";
 
 interface Booking {
   id: string;
+  name: string;
+  email: string;
   package: string;
   booking_date: string;
   booking_time: string;
@@ -19,6 +21,7 @@ interface Booking {
 const MyBookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const navigate = useNavigate();
 
@@ -36,12 +39,24 @@ const MyBookings = () => {
         return;
       }
 
-      const { data, error } = await supabase
+      // Check if user has admin role
+      const { data: isAdminUser } = await supabase
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+
+      setIsAdmin(isAdminUser || false);
+
+      // Fetch bookings - all if admin, only own if not
+      let query = supabase
         .from("bookings")
         .select("*")
-        .eq("user_id", user.id)
         .order("booking_date", { ascending: true })
         .order("booking_time", { ascending: true });
+
+      if (!isAdminUser) {
+        query = query.eq("user_id", user.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -79,10 +94,10 @@ const MyBookings = () => {
       <section className="gradient-hero py-16 text-center">
         <div className="container">
           <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
-            My Bookings
+            {isAdmin ? "All Bookings" : "My Bookings"}
           </h1>
           <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            View your upcoming massage appointments
+            {isAdmin ? "View all customer appointments" : "View your upcoming massage appointments"}
           </p>
         </div>
       </section>
@@ -136,6 +151,13 @@ const MyBookings = () => {
                         <Card key={booking.id} className="transition-elegant hover:scale-[1.01]">
                           <CardContent className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              {isAdmin && (
+                                <div>
+                                  <p className="text-sm text-muted-foreground mb-1">Customer</p>
+                                  <p className="font-semibold">{booking.name}</p>
+                                  <p className="text-sm text-muted-foreground">{booking.email}</p>
+                                </div>
+                              )}
                               <div>
                                 <p className="text-sm text-muted-foreground mb-1">Package</p>
                                 <p className="font-semibold capitalize">{booking.package}</p>
