@@ -43,9 +43,9 @@ const Navigation = () => {
         aria-label="Toggle menu"
       >
         {isMenuOpen ? (
-          <X className="w-6 h-6 text-foreground" />
+          <X className="w-6 h-6 text-black" />
         ) : (
-          <Menu className="w-6 h-6 text-foreground" />
+          <Menu className="w-6 h-6 text-black" />
         )}
       </button>
 

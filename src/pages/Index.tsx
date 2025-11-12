@@ -3,7 +3,6 @@ import PackageCard from "@/components/PackageCard";
 import massage1 from "@/assets/massage-1.jpg";
 import massage2 from "@/assets/massage-2.jpg";
 import massage3 from "@/assets/massage-3.jpg";
-import logo from "@/assets/logo.png";
 
 const packages = [
   {
@@ -111,21 +110,7 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="gradient-hero py-20 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 rotate-12">
-            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" />
-          </div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 -rotate-12">
-            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" style={{ animationDelay: "1s" }} />
-          </div>
-          <div className="absolute top-1/2 left-1/4 w-24 h-24 rotate-45">
-            <img src={logo} alt="" className="w-full h-full object-cover animate-pulse" style={{ animationDelay: "0.5s" }} />
-          </div>
-        </div>
         <div className="container relative z-10">
-          <div className="inline-block mb-6 animate-scale-in">
-            <img src={logo} alt="Geena Thai Massage Logo" className="w-20 h-20 mx-auto object-cover" />
-          </div>
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             Experience Ultimate Relaxation
           </h1>
@@ -153,13 +138,6 @@ const Index = () => {
         
         <div className="container">
           <div className="text-center mb-12">
-            <div className="inline-block mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-px w-12 bg-accent"></div>
-                <img src={logo} alt="" className="w-12 h-12 object-cover" />
-                <div className="h-px w-12 bg-accent"></div>
-              </div>
-            </div>
             <h2 className="text-4xl font-bold font-serif mb-4">Our Massage Packages</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
               Choose from our carefully curated selection of premium massage experiences.
