@@ -3,7 +3,7 @@ import PackageCard from "@/components/PackageCard";
 import massage1 from "@/assets/massage-1.jpg";
 import massage2 from "@/assets/massage-2.jpg";
 import massage3 from "@/assets/massage-3.jpg";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const packages = [
   {
