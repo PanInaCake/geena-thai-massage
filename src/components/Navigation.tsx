@@ -62,6 +62,16 @@ const Navigation = () => {
               size="lg"
               className="text-2xl py-6 px-8 transition-smooth"
             >
+              About Us
+            </Button>
+          </Link>
+
+          <Link to="/packages" onClick={handleNavClick}>
+            <Button 
+              variant={location.pathname === "/packages" ? "secondary" : "ghost"}
+              size="lg"
+              className="text-2xl py-6 px-8 transition-smooth"
+            >
               Packages
             </Button>
           </Link>
