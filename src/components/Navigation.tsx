@@ -3,11 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Menu, X } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -25,70 +27,89 @@ const Navigation = () => {
     await supabase.auth.signOut();
     toast.success("Signed out successfully");
     navigate("/");
+    setIsMenuOpen(false);
+  };
+
+  const handleNavClick = () => {
+    setIsMenuOpen(false);
   };
   
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold font-serif bg-gradient-primary bg-clip-text text-transparent">
-            Serenity Spa
-          </h1>
-        </Link>
-        
-        <div className="flex items-center gap-4">
-          <Link to="/">
+    <>
+      {/* Hamburger Menu Button */}
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="fixed top-6 left-6 z-[100] p-2 hover:bg-accent/10 rounded-md transition-smooth"
+        aria-label="Toggle menu"
+      >
+        {isMenuOpen ? (
+          <X className="w-6 h-6 text-foreground" />
+        ) : (
+          <Menu className="w-6 h-6 text-foreground" />
+        )}
+      </button>
+
+      {/* Full-Screen Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-[90] bg-background transition-all duration-300 ${
+          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+      >
+        <nav className="flex flex-col items-center justify-center h-full gap-8">
+          <Link to="/" onClick={handleNavClick}>
             <Button 
               variant={location.pathname === "/" ? "secondary" : "ghost"}
-              size="sm"
-              className="transition-smooth"
+              size="lg"
+              className="text-2xl py-6 px-8 transition-smooth"
             >
               Packages
             </Button>
           </Link>
-          <Link to="/booking">
+          
+          <Link to="/booking" onClick={handleNavClick}>
             <Button 
               variant={location.pathname === "/booking" ? "accent" : "ghost"}
-              size="sm"
-              className="transition-smooth"
+              size="lg"
+              className="text-2xl py-6 px-8 transition-smooth"
             >
               Book Now
             </Button>
           </Link>
+          
           {user ? (
             <>
-              <Link to="/my-bookings">
+              <Link to="/my-bookings" onClick={handleNavClick}>
                 <Button 
                   variant={location.pathname === "/my-bookings" ? "secondary" : "ghost"}
-                  size="sm"
-                  className="transition-smooth"
+                  size="lg"
+                  className="text-2xl py-6 px-8 transition-smooth"
                 >
                   My Bookings
                 </Button>
               </Link>
               <Button 
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={handleSignOut}
-                className="transition-smooth"
+                className="text-2xl py-6 px-8 transition-smooth"
               >
                 Sign Out
               </Button>
             </>
           ) : (
-            <Link to="/auth">
+            <Link to="/auth" onClick={handleNavClick}>
               <Button 
                 variant={location.pathname === "/auth" ? "secondary" : "ghost"}
-                size="sm"
-                className="transition-smooth"
+                size="lg"
+                className="text-2xl py-6 px-8 transition-smooth"
               >
                 Sign In
               </Button>
             </Link>
           )}
-        </div>
-      </nav>
-    </header>
+        </nav>
+      </div>
+    </>
   );
 };
 
