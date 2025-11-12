@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, isPast, parseISO, startOfToday } from "date-fns";
 
 interface Booking {
   id: string;
@@ -68,9 +68,17 @@ const MyBookings = () => {
     }
   };
 
-  const bookedDates = bookings.map(b => new Date(b.booking_date));
+  // Filter out past bookings
+  const isBookingPast = (booking: Booking) => {
+    const bookingDateTime = new Date(`${booking.booking_date}T${booking.booking_time}`);
+    return isPast(bookingDateTime);
+  };
+
+  const upcomingBookings = bookings.filter(booking => !isBookingPast(booking));
   
-  const selectedDateBookings = bookings.filter(booking => 
+  const bookedDates = upcomingBookings.map(b => new Date(b.booking_date));
+  
+  const selectedDateBookings = upcomingBookings.filter(booking => 
     selectedDate && isSameDay(new Date(booking.booking_date), selectedDate)
   );
 
@@ -104,7 +112,7 @@ const MyBookings = () => {
 
       <section className="py-16 bg-background">
         <div className="container max-w-4xl">
-          {bookings.length === 0 ? (
+          {upcomingBookings.length === 0 ? (
             <Card className="shadow-gold">
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground mb-4">No bookings yet</p>
@@ -124,6 +132,7 @@ const MyBookings = () => {
                     mode="single"
                     selected={selectedDate}
                     onSelect={setSelectedDate}
+                    disabled={(date) => date < startOfToday()}
                     modifiers={{
                       booked: bookedDates
                     }}
