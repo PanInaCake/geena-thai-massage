@@ -174,6 +174,13 @@ const Index = () => {
         {/* Bottom decorative border */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-accent"></div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-primary py-6 text-center">
+        <p className="text-primary-foreground text-sm">
+          © {new Date().getFullYear()} Geena Thai Massage. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 };
