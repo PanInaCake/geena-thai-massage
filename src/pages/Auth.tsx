@@ -65,7 +65,7 @@ const Auth = () => {
     <div className="min-h-screen">
       <Navigation />
       
-      <section className="gradient-hero py-16 text-center">
+      <section className="gradient-hero py-16 pt-32 text-center">
         <div className="container">
           <h1 className="text-5xl font-bold font-serif text-primary-foreground mb-4 animate-fade-in">
             Welcome Back
