@@ -109,7 +109,7 @@ const Packages = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="gradient-hero py-20 text-center relative overflow-hidden">
+      <section className="gradient-hero py-20 pt-32 text-center relative overflow-hidden">
         <div className="container relative z-10">
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             Our Massage Packages
