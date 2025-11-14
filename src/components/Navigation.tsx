@@ -36,22 +36,87 @@ const Navigation = () => {
   
   return (
     <>
-      {/* Hamburger Menu Button */}
+      {/* Hamburger Menu Button - Mobile/Tablet Only */}
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="fixed top-6 left-6 z-[100] p-2 hover:bg-accent/10 rounded-md transition-smooth"
+        className="fixed top-6 left-6 z-[100] p-2 hover:bg-accent/10 rounded-md transition-smooth lg:hidden"
         aria-label="Toggle menu"
       >
         {isMenuOpen ? (
-          <X className="w-6 h-6 text-black" />
+          <X className="w-6 h-6 text-foreground" />
         ) : (
-          <Menu className="w-6 h-6 text-black" />
+          <Menu className="w-6 h-6 text-foreground" />
         )}
       </button>
 
-      {/* Full-Screen Menu Overlay */}
+      {/* Desktop Navbar - Large Screens Only */}
+      <nav className="hidden lg:flex fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link to="/">
+              <Button 
+                variant={location.pathname === "/" ? "secondary" : "ghost"}
+                className="transition-smooth"
+              >
+                About Us
+              </Button>
+            </Link>
+
+            <Link to="/packages">
+              <Button 
+                variant={location.pathname === "/packages" ? "secondary" : "ghost"}
+                className="transition-smooth"
+              >
+                Packages
+              </Button>
+            </Link>
+            
+            <Link to="/booking">
+              <Button 
+                variant={location.pathname === "/booking" ? "default" : "ghost"}
+                className="transition-smooth"
+              >
+                Book Now
+              </Button>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <Link to="/my-bookings">
+                  <Button 
+                    variant={location.pathname === "/my-bookings" ? "secondary" : "ghost"}
+                    className="transition-smooth"
+                  >
+                    My Bookings
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost"
+                  onClick={handleSignOut}
+                  className="transition-smooth"
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button 
+                  variant={location.pathname === "/auth" ? "secondary" : "ghost"}
+                  className="transition-smooth"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* Full-Screen Menu Overlay - Mobile/Tablet Only */}
       <div
-        className={`fixed inset-0 z-[90] bg-background transition-all duration-300 ${
+        className={`fixed inset-0 z-[90] bg-background transition-all duration-300 lg:hidden ${
           isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
       >
