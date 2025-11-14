@@ -17,7 +17,7 @@ interface PackageCardProps {
 
 const PackageCard = ({ title, description, pricing, image, features }: PackageCardProps) => {
   return (
-    <Card className="overflow-hidden shadow-soft hover:shadow-gold transition-all duration-300 hover:-translate-y-1">
+    <Card className="overflow-hidden shadow-soft hover:shadow-gold transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
       <div className="aspect-video overflow-hidden">
         <img 
           src={image} 
@@ -29,7 +29,7 @@ const PackageCard = ({ title, description, pricing, image, features }: PackageCa
         <CardTitle className="text-2xl font-serif mb-2">{title}</CardTitle>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         <div className="space-y-3">
           <div className="space-y-2">
             {pricing.map((option, index) => (
