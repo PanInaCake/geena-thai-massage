@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import aboutHero from "@/assets/about-hero.jpg";
 
 const Index = () => {
   return (
@@ -7,6 +8,13 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="gradient-hero py-20 pt-32 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src={aboutHero} 
+            alt="Serene Thai massage spa interior"
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="container relative z-10">
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             About Geena Thai Massage

@@ -3,6 +3,13 @@ import PackageCard from "@/components/PackageCard";
 import massage1 from "@/assets/massage-1.jpg";
 import massage2 from "@/assets/massage-2.jpg";
 import massage3 from "@/assets/massage-3.jpg";
+import massage4 from "@/assets/massage-4.jpg";
+import massage5 from "@/assets/massage-5.jpg";
+import massage6 from "@/assets/massage-6.jpg";
+import massage7 from "@/assets/massage-7.jpg";
+import massage8 from "@/assets/massage-8.jpg";
+import massage9 from "@/assets/massage-9.jpg";
+import massage10 from "@/assets/massage-10.jpg";
 
 const packages = [
   {
@@ -43,7 +50,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massage1
+    image: massage4
   },
   {
     title: "Back, Neck & Shoulder Massage",
@@ -53,7 +60,7 @@ const packages = [
       { duration: "45 minutes", price: "$70" },
       { duration: "60 minutes", price: "$95" }
     ],
-    image: massage2
+    image: massage5
   },
   {
     title: "Head Massage",
@@ -63,7 +70,7 @@ const packages = [
       { duration: "45 minutes", price: "$70" },
       { duration: "60 minutes", price: "$95" }
     ],
-    image: massage3
+    image: massage6
   },
   {
     title: "Foot Massage",
@@ -73,7 +80,7 @@ const packages = [
       { duration: "45 minutes", price: "$70" },
       { duration: "60 minutes", price: "$95" }
     ],
-    image: massage1
+    image: massage7
   },
   {
     title: "Foot Spa + Foot Massage",
@@ -81,7 +88,7 @@ const packages = [
     pricing: [
       { duration: "60 minutes", price: "$95" }
     ],
-    image: massage2
+    image: massage8
   },
   {
     title: "Back Scrub + Massage",
@@ -89,7 +96,7 @@ const packages = [
     pricing: [
       { duration: "45 minutes", price: "$95" }
     ],
-    image: massage3
+    image: massage9
   },
   {
     title: "Therapeutic Massage",
@@ -99,7 +106,7 @@ const packages = [
       { duration: "90 minutes", price: "$140" },
       { duration: "120 minutes", price: "$170" }
     ],
-    image: massage1
+    image: massage10
   }
 ];
 
