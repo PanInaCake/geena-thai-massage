@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import lotusIcon from "@/assets/lotus-icon.jpg";
+import footerLogo from "@/assets/footer-logo.png";
 
 const Footer = () => {
   return (
@@ -79,9 +79,9 @@ const Footer = () => {
         {/* Logo and Copyright */}
         <div className="mt-10 pt-6 border-t border-primary-foreground/20 flex flex-col md:flex-row items-center justify-between gap-4">
           <img 
-            src={lotusIcon} 
+            src={footerLogo} 
             alt="Geena Thai Massage Logo" 
-            className="w-16 h-16 rounded-full object-cover opacity-80"
+            className="w-16 h-16 object-contain"
           />
           <p className="text-primary-foreground text-sm opacity-70">
             © {new Date().getFullYear()} Geena Thai Massage. All rights reserved.
