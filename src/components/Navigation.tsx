@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Menu, X } from "lucide-react";
+import navbarLogo from "@/assets/navbar-logo.jpg";
 
 const Navigation = () => {
   const location = useLocation();
@@ -81,6 +82,15 @@ const Navigation = () => {
             </Link>
           </div>
 
+          {/* Center Logo */}
+          <Link to="/" className="absolute left-1/2 transform -translate-x-1/2">
+            <img 
+              src={navbarLogo} 
+              alt="Geena Thai Massage" 
+              className="h-12 w-auto object-contain"
+            />
+          </Link>
+
           <div className="flex items-center gap-4">
             {user ? (
               <>
@@ -113,6 +123,18 @@ const Navigation = () => {
           </div>
         </div>
       </nav>
+
+      {/* Mobile Logo - Centered at top */}
+      <Link 
+        to="/" 
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] lg:hidden"
+      >
+        <img 
+          src={navbarLogo} 
+          alt="Geena Thai Massage" 
+          className="h-10 w-auto object-contain"
+        />
+      </Link>
 
       {/* Full-Screen Menu Overlay - Mobile/Tablet Only */}
       <div
