@@ -38,8 +38,14 @@ const Footer = () => {
               1412 Cameron Road, Greerton, Tauranga 3142
             </p>
             <a 
-              href="mailto:info@geenathaimassage.co.nz" 
+              href="tel:0225396414" 
               className="text-sm underline underline-offset-4 hover:opacity-80 transition-opacity mt-2 inline-block"
+            >
+              Tel. 022 539 6414
+            </a>
+            <a 
+              href="mailto:info@geenathaimassage.co.nz" 
+              className="text-sm underline underline-offset-4 hover:opacity-80 transition-opacity mt-1 inline-block"
             >
               info@geenathaimassage.co.nz
             </a>
