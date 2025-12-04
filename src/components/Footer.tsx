@@ -25,7 +25,7 @@ const Footer = () => {
               <Link to="/booking" className="text-sm uppercase tracking-wider hover:opacity-80 transition-opacity underline underline-offset-4">
                 Book Now
               </Link>
-              <a href="mailto:info@geenathaimassage.co.nz" className="text-sm uppercase tracking-wider hover:opacity-80 transition-opacity underline underline-offset-4">
+              <a href="mailto:geenathaimassage@gmail.com" className="text-sm uppercase tracking-wider hover:opacity-80 transition-opacity underline underline-offset-4">
                 Contact Us
               </a>
             </nav>
@@ -44,10 +44,10 @@ const Footer = () => {
               Tel. 022 539 6414
             </a>
             <a 
-              href="mailto:info@geenathaimassage.co.nz" 
+              href="mailto:geenathaimassage@gmail.com" 
               className="text-sm underline underline-offset-4 hover:opacity-80 transition-opacity mt-1 inline-block"
             >
-              info@geenathaimassage.co.nz
+              geenathaimassage@gmail.com
             </a>
           </div>
 
