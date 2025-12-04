@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Menu, X } from "lucide-react";
-import navbarLogo from "@/assets/navbar-logo.jpg";
+import navbarLogo from "@/assets/navbar-logo.png";
 
 const Navigation = () => {
   const location = useLocation();
