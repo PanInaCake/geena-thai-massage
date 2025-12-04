@@ -35,7 +35,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <h4 className="text-sm font-light mb-3 opacity-70">Location</h4>
             <p className="text-sm leading-relaxed">
-              706 Te Rapa Road, Te Rapa, Hamilton
+              1412 Cameron Road, Greerton, Tauranga 3142
             </p>
             <a 
               href="mailto:info@geenathaimassage.co.nz" 
