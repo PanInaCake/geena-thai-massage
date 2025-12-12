@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import aboutHero from "@/assets/about-hero.jpg";
+import heroLogo from "@/assets/hero-logo.png";
 
 const Index = () => {
   return (
@@ -17,8 +18,13 @@ const Index = () => {
           />
         </div>
         <div className="container relative z-10">
+          <img 
+            src={heroLogo} 
+            alt="Geena Thai Massage" 
+            className="h-40 md:h-52 w-auto mx-auto mb-6 animate-fade-in"
+          />
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
-            About Geena Thai Massage
+            About
           </h1>
           <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Your sanctuary for authentic Thai healing and wellness in the heart of the city.
