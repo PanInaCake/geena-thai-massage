@@ -106,6 +106,22 @@ const packages = [
       { duration: "120 minutes", price: "$170" }
     ],
     image: massage10
+  },
+  {
+    title: "Hot Stone Massage",
+    description: "Heated basalt stones combined with massage techniques to melt away tension and promote deep relaxation.",
+    pricing: [
+      { duration: "90 minutes", price: "$145" }
+    ],
+    image: massage4
+  },
+  {
+    title: "Hot Herbal Massage",
+    description: "Traditional Thai herbal compress massage using heated herbs to soothe muscles and invigorate the senses.",
+    pricing: [
+      { duration: "90 minutes", price: "$145" }
+    ],
+    image: massage6
   }
 ];
 
