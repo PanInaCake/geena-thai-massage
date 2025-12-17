@@ -23,7 +23,7 @@ const packages = [
     image: massage1
   },
   {
-    title: "Thai Massage (With Oil)",
+    title: "Thai Oil Massage",
     description: "Traditional Thai massage enhanced with therapeutic oils for smooth, flowing movements.",
     pricing: [
       { duration: "60 minutes", price: "$95" },
@@ -56,9 +56,9 @@ const packages = [
     title: "Back, Neck & Shoulder Massage",
     description: "Targeted relief for office syndrome, focusing on upper body tension and stress.",
     pricing: [
-      { duration: "30 minutes", price: "$55" },
-      { duration: "45 minutes", price: "$70" },
-      { duration: "60 minutes", price: "$95" }
+      { duration: "30 minutes", price: "$60" },
+      { duration: "45 minutes", price: "$75" },
+      { duration: "60 minutes", price: "$100" }
     ],
     image: massage5
   },
@@ -77,8 +77,7 @@ const packages = [
     description: "Therapeutic foot massage focusing on pressure points to restore energy flow.",
     pricing: [
       { duration: "30 minutes", price: "$55" },
-      { duration: "45 minutes", price: "$70" },
-      { duration: "60 minutes", price: "$95" }
+      { duration: "60 minutes", price: "$100" }
     ],
     image: massage7
   },
@@ -86,7 +85,7 @@ const packages = [
     title: "Foot Spa + Foot Massage",
     description: "Luxurious foot spa treatment followed by a relaxing foot massage.",
     pricing: [
-      { duration: "60 minutes", price: "$95" }
+      { duration: "60 minutes", price: "$100" }
     ],
     image: massage8
   },
@@ -94,7 +93,7 @@ const packages = [
     title: "Back Scrub + Massage",
     description: "Exfoliating back scrub followed by a soothing massage for smooth, refreshed skin.",
     pricing: [
-      { duration: "45 minutes", price: "$95" }
+      { duration: "90 minutes", price: "$150" }
     ],
     image: massage9
   },
@@ -102,7 +101,7 @@ const packages = [
     title: "Therapeutic Massage",
     description: "Focus on problem areas throughout the entire body for targeted pain relief and recovery.",
     pricing: [
-      { duration: "60 minutes", price: "$105" },
+      { duration: "60 minutes", price: "$110" },
       { duration: "90 minutes", price: "$140" },
       { duration: "120 minutes", price: "$170" }
     ],
