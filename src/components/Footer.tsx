@@ -55,7 +55,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <h4 className="text-sm font-light mb-3 opacity-70">Hours</h4>
             <p className="text-sm">Friday – Wednesday</p>
-            <p className="text-sm">10am – 2pm</p>
+            <p className="text-sm">10am – 8pm</p>
           </div>
 
           {/* Social */}
