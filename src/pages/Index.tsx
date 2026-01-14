@@ -23,7 +23,7 @@ const Index = () => {
             alt="Geena Thai Massage" 
             className="h-40 md:h-52 w-auto mx-auto mb-6 animate-fade-in"
           />
-          <h1 className="text-5xl md:text-6xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
+          <h1 className="text-4xl md:text-5xl font-bold font-serif text-primary-foreground mb-6 animate-fade-in">
             About
           </h1>
           <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
