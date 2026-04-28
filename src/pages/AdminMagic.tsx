@@ -90,7 +90,7 @@ const AdminMagic = () => {
                 disabled={loading}
                 onClick={handleSendMagicLink}
               >
-                {loading ? "Sending link..." : "Send Magic Link"}
+                {loading ? "Sending link..." : "Send Link"}
               </Button>
 
               <Link to="/admin/login" className="block">
