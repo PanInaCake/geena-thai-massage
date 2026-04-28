@@ -14,6 +14,12 @@ const Index = () => {
     const handleMagicLinkRedirect = async () => {
       const hash = window.location.hash;
       const hasMagicLinkTokens = hash.includes("access_token=") || hash.includes("type=magiclink");
+      const hasRecoveryTokens = hash.includes("type=recovery");
+
+      if (hasRecoveryTokens) {
+        navigate(`/admin/reset-password${window.location.hash}`);
+        return;
+      }
 
       if (!hasMagicLinkTokens) return;
 

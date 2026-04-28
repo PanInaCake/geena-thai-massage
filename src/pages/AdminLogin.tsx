@@ -8,10 +8,13 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+const ADMIN_EMAIL = "geenathaimassage@gmail.com";
+
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -50,6 +53,24 @@ const AdminLogin = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    setResetLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(ADMIN_EMAIL, {
+        redirectTo: `${window.location.origin}/admin/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success(`Password reset email sent to ${ADMIN_EMAIL}`);
+    } catch (error) {
+      toast.error("Failed to send password reset email");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -74,7 +95,7 @@ const AdminLogin = () => {
                 Enter your administrator credentials
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -109,6 +130,15 @@ const AdminLogin = () => {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleResetPassword}
+                disabled={resetLoading}
+              >
+                {resetLoading ? "Sending reset..." : "Forgot password?"}
+              </Button>
             </CardContent>
           </Card>
         </div>
