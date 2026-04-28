@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +40,7 @@ const AdminMagic = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: ADMIN_EMAIL,
         options: {
-          emailRedirectTo: `${window.location.origin}/admin`,
+          emailRedirectTo: `${window.location.origin}/admin-login-owner-9x7k/callback`,
         },
       });
 
@@ -93,11 +93,6 @@ const AdminMagic = () => {
                 {loading ? "Sending link..." : "Send Link"}
               </Button>
 
-              <Link to="/admin/login" className="block">
-                <Button type="button" variant="outline" className="w-full">
-                  Back to Admin Login
-                </Button>
-              </Link>
             </CardContent>
           </Card>
         </div>

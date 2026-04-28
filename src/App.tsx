@@ -9,6 +9,7 @@ import Booking from "./pages/Booking";
 import BookingAdmin from "./pages/BookingAdmin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminMagic from "./pages/AdminMagic";
+import AdminMagicCallback from "./pages/AdminMagicCallback";
 import Auth from "./pages/Auth";
 import MyBookings from "./pages/MyBookings";
 import NotFound from "./pages/NotFound";
@@ -29,8 +30,8 @@ const App = () => (
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/admin" element={<BookingAdmin />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/magic" element={<AdminMagic />} />
           <Route path="/admin-login-owner-9x7k" element={<AdminMagic />} />
+          <Route path="/admin-login-owner-9x7k/callback" element={<AdminMagicCallback />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -71,10 +71,10 @@ const AdminLogin = () => {
             <CardHeader>
               <CardTitle className="text-2xl font-serif">Admin Access</CardTitle>
               <CardDescription>
-                Enter your administrator credentials or request a one-time link
+                Enter your administrator credentials
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -109,11 +109,6 @@ const AdminLogin = () => {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
-              <Link to="/admin/magic" className="block">
-                <Button type="button" variant="outline" className="w-full">
-                  Email Me a Link
-                </Button>
-              </Link>
             </CardContent>
           </Card>
         </div>
