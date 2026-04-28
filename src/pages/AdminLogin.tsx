@@ -6,68 +6,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_EMAIL = "geenathaimassage@gmail.com";
+const ADMIN_PASSWORD = "Geena51$";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast.error("Invalid credentials");
-        return;
-      }
-
-      if (data.user) {
-        // Check if user has admin role
-        const { data: roleData, error: roleError } = await supabase
-          .rpc('has_role', { _user_id: data.user.id, _role: 'admin' });
-
-        if (roleError || !roleData) {
-          await supabase.auth.signOut();
-          toast.error("Access denied - Admin privileges required");
-          return;
-        }
-
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         toast.success("Logged in successfully!");
         navigate("/admin");
+      } else {
+        toast.error("Invalid credentials");
       }
     } catch (error) {
       toast.error("Login failed");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleResetPassword = async () => {
-    setResetLoading(true);
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(ADMIN_EMAIL, {
-        redirectTo: `${window.location.origin}/admin/reset-password`,
-      });
-
-      if (error) throw error;
-
-      toast.success(`Password reset email sent to ${ADMIN_EMAIL}`);
-    } catch (error) {
-      toast.error("Failed to send password reset email");
-    } finally {
-      setResetLoading(false);
     }
   };
 
@@ -130,15 +93,6 @@ const AdminLogin = () => {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handleResetPassword}
-                disabled={resetLoading}
-              >
-                {resetLoading ? "Sending reset..." : "Forgot password?"}
-              </Button>
             </CardContent>
           </Card>
         </div>
