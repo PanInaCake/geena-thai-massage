@@ -52,7 +52,7 @@ const BookingAdmin = () => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem("isAdmin");
     toast.success("Signed out successfully");
     navigate("/admin/login");
   };
