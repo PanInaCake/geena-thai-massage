@@ -1,9 +1,44 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import aboutHero from "@/assets/about-hero.jpg";
 import heroLogo from "@/assets/hero-logo.png";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMagicLinkRedirect = async () => {
+      const hash = window.location.hash;
+      const hasMagicLinkTokens = hash.includes("access_token=") || hash.includes("type=magiclink");
+
+      if (!hasMagicLinkTokens) return;
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const user = session?.user;
+      if (!user) return;
+
+      const { data: isAdminUser, error } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+
+      if (error || !isAdminUser) return;
+
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      toast.success("Admin login successful");
+      navigate("/admin");
+    };
+
+    handleMagicLinkRedirect();
+  }, [navigate]);
+
   return (
     <div className="min-h-screen">
       <Navigation />
