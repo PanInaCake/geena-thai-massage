@@ -68,17 +68,20 @@ const MyBookings = () => {
     }
   };
 
-  // Filter out past bookings
+  // Determine whether a booking is in the past
   const isBookingPast = (booking: Booking) => {
     const bookingDateTime = new Date(`${booking.booking_date}T${booking.booking_time}`);
     return isPast(bookingDateTime);
   };
 
-  const upcomingBookings = bookings.filter(booking => !isBookingPast(booking));
-  
-  const bookedDates = upcomingBookings.map(b => new Date(b.booking_date));
-  
-  const selectedDateBookings = upcomingBookings.filter(booking => 
+  // Admins can see all bookings; non-admin users only see upcoming.
+  const visibleBookings = isAdmin
+    ? bookings
+    : bookings.filter((booking) => !isBookingPast(booking));
+
+  const bookedDates = visibleBookings.map((b) => new Date(b.booking_date));
+
+  const selectedDateBookings = visibleBookings.filter((booking) =>
     selectedDate && isSameDay(new Date(booking.booking_date), selectedDate)
   );
 
@@ -112,7 +115,7 @@ const MyBookings = () => {
 
       <section className="py-16 bg-background">
         <div className="container max-w-4xl">
-          {upcomingBookings.length === 0 ? (
+          {visibleBookings.length === 0 ? (
             <Card className="shadow-gold">
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground mb-4">No bookings yet</p>
