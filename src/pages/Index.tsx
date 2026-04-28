@@ -17,7 +17,7 @@ const Index = () => {
       const hasRecoveryTokens = hash.includes("type=recovery");
 
       if (hasRecoveryTokens) {
-        navigate(`/admin/reset-password${window.location.hash}`);
+        window.location.replace(`${window.location.origin}/admin/reset-password${window.location.hash}`);
         return;
       }
 

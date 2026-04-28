@@ -16,27 +16,39 @@ const AdminResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const setReadyFromSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setReady(Boolean(session?.user));
+    };
+
     const checkRecoverySession = async () => {
       const hash = window.location.hash;
       const hasRecoveryTokens = hash.includes("access_token=") || hash.includes("type=recovery");
 
       if (!hasRecoveryTokens) {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setReady(Boolean(session?.user));
+        await setReadyFromSession();
         return;
       }
 
-      window.setTimeout(async () => {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setReady(Boolean(session?.user));
-      }, 250);
+      window.setTimeout(setReadyFromSession, 500);
     };
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+        setReady(Boolean(session?.user));
+      }
+    });
+
     checkRecoverySession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -58,6 +70,7 @@ const AdminResetPassword = () => {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
 
+      window.history.replaceState(null, "", window.location.pathname);
       toast.success("Password updated successfully");
       navigate("/admin");
     } catch (error) {
