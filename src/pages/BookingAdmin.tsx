@@ -29,25 +29,7 @@ const BookingAdmin = () => {
 
   const checkAuthAndFetchBookings = async () => {
     try {
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("Please log in to access this page");
-        navigate("/admin/login");
-        return;
-      }
 
-      // Check if user has admin role
-      const { data: isAdminUser, error: roleError } = await supabase
-        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
-
-      if (roleError || !isAdminUser) {
-        toast.error("Access denied - Admin privileges required");
-        await supabase.auth.signOut();
-        navigate("/admin/login");
-        return;
-      }
 
       setIsAdmin(true);
 
