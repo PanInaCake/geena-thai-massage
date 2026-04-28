@@ -22,6 +22,7 @@ const AdminLogin = () => {
 
     try {
       if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        localStorage.setItem("isAdmin", "true");
         toast.success("Logged in successfully!");
         navigate("/admin");
       } else {
