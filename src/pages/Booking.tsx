@@ -37,6 +37,18 @@ const bookingSchema = z.object({
   }),
 });
 
+type BookingRow = {
+  id: string;
+  user_id: string | null;
+  name: string;
+  email: string;
+  package: string;
+  booking_date: string; // yyyy-MM-dd
+  booking_time: string;
+  created_at: string;
+  notes: string | null;
+};
+
 const Booking = () => {
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
@@ -119,15 +131,19 @@ const Booking = () => {
       const validatedData = validation.data;
 
       // Insert booking into database with validated data
-      const { error } = await supabase.from("bookings").insert({
-        user_id: userId,
-        name: validatedData.name,
-        email: validatedData.email,
-        package: validatedData.package,
-        booking_date: formattedDate,
-        booking_time: validatedData.time,
-        notes: formData.notes || null,
-      });
+      const { data: insertedBooking, error } = await supabase
+        .from("bookings")
+        .insert({
+          user_id: userId,
+          name: validatedData.name,
+          email: validatedData.email,
+          package: validatedData.package,
+          booking_date: formattedDate,
+          booking_time: validatedData.time,
+          notes: formData.notes || null,
+        })
+        .select("*")
+        .single();
 
       if (error) {
         // Check if error is due to unique constraint violation (double booking)
@@ -142,6 +158,17 @@ const Booking = () => {
       }
 
       toast.success("Booking confirmed! We'll contact you soon.");
+
+      if (insertedBooking) {
+        // Fire-and-forget email; do not block the booking confirmation.
+        void fetch("/api/send-booking-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(insertedBooking as BookingRow),
+        }).catch(() => {
+          toast.error("Booking saved, but we couldn't send the notification email.");
+        });
+      }
 
       // Reset form
       setFormData({ name: "", email: "", package: "", time: "", notes: "" });
