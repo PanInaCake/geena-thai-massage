@@ -10,7 +10,7 @@ export const MASSAGE_BOOKING_PACKAGES = [
   { id: "neck-shoulder", label: "Neck & Shoulder Massage", durations: [30, 45, 60] },
   { id: "head", label: "Head Massage", durations: [30, 45, 60] },
   { id: "foot", label: "Foot Massage", durations: [30, 60] },
-  { id: "foot-spa-foot", label: "Foot Spa + Foot Massage", durations: [30] },
+  { id: "foot-spa-foot", label: "Foot Spa + Foot Massage", durations: [60] },
   { id: "back-scrub", label: "Back Scrub + Massage", durations: [90] },
   { id: "therapeutic", label: "Therapeutic Massage", durations: [60, 90, 120] },
   { id: "hot-stone", label: "Hot Stone Massage", durations: [90] },
