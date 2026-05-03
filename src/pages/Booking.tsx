@@ -16,26 +16,49 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import {
+  BOOKING_PACKAGE_IDS,
+  formatBookingPackageForDb,
+  getMassageBookingPackage,
+  massagePackageAllowsDuration,
+  MASSAGE_BOOKING_PACKAGES,
+  type MassageBookingPackageId,
+} from "@/constants/massageBooking";
 
-// Validation schema
-const ALLOWED_PACKAGES = ["swedish", "hotstone", "aromatherapy"] as const;
 const ALLOWED_TIME_SLOTS = ["9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm"] as const;
+const DURATION_SELECT_VALUES = ["30", "45", "60", "90", "120"] as const;
 
-const bookingSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required")
-    .max(100, "Name must be less than 100 characters")
-    .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
-  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
-  package: z.enum(ALLOWED_PACKAGES, {
-    errorMap: () => ({ message: "Please select a valid package" }),
-  }),
-  time: z.enum(ALLOWED_TIME_SLOTS, {
-    errorMap: () => ({ message: "Please select a valid time slot" }),
-  }),
-});
+const bookingSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, "Name is required")
+      .max(100, "Name must be less than 100 characters")
+      .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+    email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+    package: z.enum(BOOKING_PACKAGE_IDS, {
+      errorMap: () => ({ message: "Please select a service" }),
+    }),
+    durationMinutes: z.enum(DURATION_SELECT_VALUES, {
+      errorMap: () => ({ message: "Please select a duration" }),
+    }),
+    time: z.enum(ALLOWED_TIME_SLOTS, {
+      errorMap: () => ({ message: "Please select a valid time slot" }),
+    }),
+  })
+  .superRefine((data, ctx) => {
+    const pkg = getMassageBookingPackage(data.package);
+    if (!pkg) return;
+    const minutes = Number(data.durationMinutes);
+    if (!massagePackageAllowsDuration(pkg, minutes)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "This duration is not available for the selected service.",
+        path: ["durationMinutes"],
+      });
+    }
+  });
 
 type BookingRow = {
   id: string;
@@ -55,6 +78,7 @@ const Booking = () => {
     name: "",
     email: "",
     package: "",
+    durationMinutes: "",
     time: "",
     notes: "",
   });
@@ -131,13 +155,18 @@ const Booking = () => {
       const validatedData = validation.data;
 
       // Insert booking into database with validated data
+      const packageSummary = formatBookingPackageForDb(
+        validatedData.package as MassageBookingPackageId,
+        Number(validatedData.durationMinutes),
+      );
+
       const { data: insertedBooking, error } = await supabase
         .from("bookings")
         .insert({
           user_id: userId,
           name: validatedData.name,
           email: validatedData.email,
-          package: validatedData.package,
+          package: packageSummary,
           booking_date: formattedDate,
           booking_time: validatedData.time,
           notes: formData.notes || null,
@@ -171,7 +200,7 @@ const Booking = () => {
       }
 
       // Reset form
-      setFormData({ name: "", email: "", package: "", time: "", notes: "" });
+      setFormData({ name: "", email: "", package: "", durationMinutes: "", time: "", notes: "" });
       setDate(undefined);
       setBookedSlots(new Set());
     } catch (error) {
@@ -183,6 +212,38 @@ const Booking = () => {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePackageChange = (packageId: string) => {
+    setFormData((prev) => {
+      const def = getMassageBookingPackage(packageId);
+      if (!def) return { ...prev, package: packageId, durationMinutes: "" };
+      const prevMins = prev.durationMinutes ? Number(prev.durationMinutes) : NaN;
+      const keepDuration = massagePackageAllowsDuration(def, prevMins);
+      const nextDuration =
+        def.durations.length === 1
+          ? String(def.durations[0])
+          : keepDuration
+            ? prev.durationMinutes
+            : "";
+      return { ...prev, package: packageId, durationMinutes: nextDuration };
+    });
+  };
+
+  const durationOptions = formData.package
+    ? getMassageBookingPackage(formData.package)?.durations ?? []
+    : [];
+
+  const timeSlotLabel: Record<(typeof ALLOWED_TIME_SLOTS)[number], string> = {
+    "9am": "9:00 AM",
+    "10am": "10:00 AM",
+    "11am": "11:00 AM",
+    "12pm": "12:00 PM",
+    "1pm": "1:00 PM",
+    "2pm": "2:00 PM",
+    "3pm": "3:00 PM",
+    "4pm": "4:00 PM",
+    "5pm": "5:00 PM",
   };
 
   if (authLoading) {
@@ -258,15 +319,39 @@ const Booking = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="package">Select Package</Label>
-                  <Select value={formData.package} onValueChange={(value) => handleChange("package", value)}>
+                  <Label htmlFor="package">Select service</Label>
+                  <Select value={formData.package} onValueChange={handlePackageChange}>
                     <SelectTrigger id="package">
-                      <SelectValue placeholder="Choose a massage package" />
+                      <SelectValue placeholder="Choose a massage service" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50 max-h-[min(60vh,24rem)]">
+                      {MASSAGE_BOOKING_PACKAGES.map((pkg) => (
+                        <SelectItem key={pkg.id} value={pkg.id}>
+                          {pkg.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="duration">Duration (minutes)</Label>
+                  <Select
+                    value={formData.durationMinutes}
+                    onValueChange={(value) => handleChange("durationMinutes", value)}
+                    disabled={!formData.package}
+                  >
+                    <SelectTrigger id="duration">
+                      <SelectValue
+                        placeholder={formData.package ? "Choose duration" : "Select a service first"}
+                      />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="swedish">Swedish Relaxation - $95</SelectItem>
-                      <SelectItem value="hotstone">Hot Stone Therapy - $145</SelectItem>
-                      <SelectItem value="aromatherapy">Aromatherapy Bliss - $120</SelectItem>
+                      {durationOptions.map((mins) => (
+                        <SelectItem key={mins} value={String(mins)}>
+                          {mins} minutes
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -303,33 +388,11 @@ const Booking = () => {
                       <SelectValue placeholder="Choose a time slot" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="9am" disabled={bookedSlots.has("9am")}>
-                        9:00 AM {bookedSlots.has("9am") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="10am" disabled={bookedSlots.has("10am")}>
-                        10:00 AM {bookedSlots.has("10am") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="11am" disabled={bookedSlots.has("11am")}>
-                        11:00 AM {bookedSlots.has("11am") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="12pm" disabled={bookedSlots.has("12pm")}>
-                        12:00 PM {bookedSlots.has("12pm") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="1pm" disabled={bookedSlots.has("1pm")}>
-                        1:00 PM {bookedSlots.has("1pm") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="2pm" disabled={bookedSlots.has("2pm")}>
-                        2:00 PM {bookedSlots.has("2pm") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="3pm" disabled={bookedSlots.has("3pm")}>
-                        3:00 PM {bookedSlots.has("3pm") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="4pm" disabled={bookedSlots.has("4pm")}>
-                        4:00 PM {bookedSlots.has("4pm") && "(Booked)"}
-                      </SelectItem>
-                      <SelectItem value="5pm" disabled={bookedSlots.has("5pm")}>
-                        5:00 PM {bookedSlots.has("5pm") && "(Booked)"}
-                      </SelectItem>
+                      {ALLOWED_TIME_SLOTS.map((slot) => (
+                        <SelectItem key={slot} value={slot} disabled={bookedSlots.has(slot)}>
+                          {timeSlotLabel[slot]} {bookedSlots.has(slot) && "(Booked)"}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

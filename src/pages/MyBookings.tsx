@@ -172,7 +172,7 @@ const MyBookings = () => {
                               )}
                               <div>
                                 <p className="text-sm text-muted-foreground mb-1">Package</p>
-                                <p className="font-semibold capitalize">{booking.package}</p>
+                                <p className="font-semibold">{booking.package}</p>
                               </div>
                               <div>
                                 <p className="text-sm text-muted-foreground mb-1">Time</p>
