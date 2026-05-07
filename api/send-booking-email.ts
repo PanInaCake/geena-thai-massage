@@ -130,15 +130,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
   });
 
-  await transporter.sendMail({
-    from: `${fromDisplay} <${fromEmail}>`,
-    to,
-    replyTo,
-    subject,
-    text: textBody,
-    html: htmlBody,
-  });
-
-  return res.status(200).json({ ok: true });
+  try {
+    await transporter.sendMail({
+      from: `${fromDisplay} <${fromEmail}>`,
+      to,
+      replyTo,
+      subject,
+      text: textBody,
+      html: htmlBody,
+    });
+  
+    return res.status(200).json({ ok: true });
+  } catch (error) {
+    console.error("EMAIL SEND ERROR:", error);
+  
+    return res.status(500).json({
+      error: "Failed to send email",
+    });
+  }
 }
 
