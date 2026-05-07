@@ -6,7 +6,7 @@ export const MASSAGE_BOOKING_PACKAGES = [
   { id: "thai-no-oil", label: "Thai Massage (No Oil)", durations: [30, 60, 90] },
   { id: "thai-oil", label: "Thai Oil Massage", durations: [60, 90, 120] },
   { id: "deep-oil", label: "Deep Oil Massage", durations: [60, 90, 120] },
-  { id: "aromatherapy-back", label: "Aromatherapy Massage Back", durations: [60, 90, 120] },
+  { id: "aromatherapy-back", label: "Aromatherapy Back Massage", durations: [60, 90, 120] },
   { id: "neck-shoulder", label: "Neck & Shoulder Massage", durations: [30, 45, 60] },
   { id: "head", label: "Head Massage", durations: [30, 45, 60] },
   { id: "foot", label: "Foot Massage", durations: [30, 60] },
