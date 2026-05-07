@@ -124,6 +124,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     console.log("Sending email...");
 
+    const textBody = [
+      "New booking received",
+      "",
+      `Booking ID: ${payload.id}`,
+      `Customer Name: ${payload.name}`,
+      `Customer Email: ${payload.email}`,
+      "",
+      `Package: ${payload.package}`,
+      `Date: ${payload.booking_date}`,
+      `Time: ${payload.booking_time}`,
+      `Created At: ${createdAtLine}`,
+      "",
+      "Notes:",
+      notesLine,
+      "",
+      `Reply-To: ${replyTo}`,
+    ].join("\n");
+    
+    const htmlBody = `
+      <div style="font-family: Arial, Helvetica, sans-serif; color: #111827; line-height: 1.5;">
+        <h2>New booking received</h2>
+    
+        <p><strong>Booking ID:</strong> ${escapeHtml(payload.id!)}</p>
+        <p><strong>Name:</strong> ${escapeHtml(payload.name!)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(payload.email!)}</p>
+    
+        <p><strong>Package:</strong> ${escapeHtml(payload.package!)}</p>
+        <p><strong>Date:</strong> ${escapeHtml(payload.booking_date!)}</p>
+        <p><strong>Time:</strong> ${escapeHtml(payload.booking_time!)}</p>
+        <p><strong>Created At:</strong> ${escapeHtml(createdAtLine)}</p>
+    
+        <p><strong>Notes:</strong><br/>${escapeHtml(notesLine)}</p>
+    
+        <p style="margin-top: 16px; color: #6b7280;">
+          Reply-to: ${escapeHtml(replyTo)}
+        </p>
+      </div>
+    `;
+
     const result = await transporter.sendMail({
       from: `${fromDisplay} <${fromEmail}>`,
       to,
