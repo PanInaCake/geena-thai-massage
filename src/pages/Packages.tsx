@@ -24,7 +24,7 @@ const packages = [
   },
   {
     title: "Thai Oil Massage",
-    description: "Traditional Thai massage enhanced with therapeutic oils for smooth, flowing movements.",
+    description: "A relaxing deep tissue massage using warm oil to relieve muscle tension, improve circulation, and promote total body relaxation.",
     pricing: [
       { duration: "60 minutes", price: "$95" },
       { duration: "90 minutes", price: "$130" },
@@ -34,7 +34,7 @@ const packages = [
   },
   {
     title: "Deep Oil Massage",
-    description: "Intense deep tissue massage with oil to relieve chronic muscle tension and knots.",
+    description: "A relaxing deep tissue massage using warm oil to relieve muscle tension, improve circulation, and promote total body relaxation.",
     pricing: [
       { duration: "60 minutes", price: "$95" },
       { duration: "90 minutes", price: "$130" },
@@ -44,7 +44,7 @@ const packages = [
   },
   {
     title: "Aromatherapy Massage",
-    description: "Relaxing massage with custom-blended aromatherapy oils for ultimate stress relief.",
+    description: "A soothing massage using aromatic essential oils with warm oil to relax the body, reduce stress, and calm the mind.",
     pricing: [
       { duration: "60 minutes", price: "$95" },
       { duration: "90 minutes", price: "$130" },
@@ -54,7 +54,7 @@ const packages = [
   },
   {
     title: "Back, Neck & Shoulder Massage",
-    description: "Targeted relief for office syndrome, focusing on upper body tension and stress.",
+    description: "A focused massage designed to relieve tension, reduce stiffness, and relax the back, neck, and shoulder muscles.",
     pricing: [
       { duration: "30 minutes", price: "$60" },
       { duration: "45 minutes", price: "$75" },
@@ -63,8 +63,8 @@ const packages = [
     image: massage5
   },
   {
-    title: "Head Massage",
-    description: "Soothing head massage to relieve tension headaches and promote mental clarity.",
+    title: "Head Relaxation Massage",
+    description: "A calming head massage designed to relieve stress, ease tension, and promote deep relaxation.",
     pricing: [
       { duration: "30 minutes", price: "$55" },
       { duration: "45 minutes", price: "$70" },
@@ -74,7 +74,7 @@ const packages = [
   },
   {
     title: "Foot Massage",
-    description: "Therapeutic foot massage focusing on pressure points to restore energy flow.",
+    description: "A relaxing foot massage that helps relieve tired feet, improve circulation, and promote overall relaxation.",
     pricing: [
       { duration: "30 minutes", price: "$55" },
       { duration: "60 minutes", price: "$100" }
@@ -83,15 +83,15 @@ const packages = [
   },
   {
     title: "Foot Spa + Foot Massage",
-    description: "Luxurious foot spa treatment followed by a relaxing foot massage.",
+    description: "A soothing foot treatment combining a relaxing foot spa and massage to soften the skin, relieve tired feet, and improve circulation.",
     pricing: [
       { duration: "60 minutes", price: "$100" }
     ],
     image: massage8
   },
   {
-    title: "Back Scrub + Massage",
-    description: "Exfoliating back scrub followed by a soothing massage for smooth, refreshed skin.",
+    title: "Back Scrub + Full Body Massage",
+    description: "A refreshing back scrub combined with a relaxing full body oil massage to exfoliate the skin, relieve tension, and leave you feeling renewed.",
     pricing: [
       { duration: "90 minutes", price: "$150" }
     ],
@@ -99,7 +99,7 @@ const packages = [
   },
   {
     title: "Therapeutic Massage",
-    description: "Focus on problem areas throughout the entire body for targeted pain relief and recovery.",
+    description: "Treatment massage for the whole body or targeted areas, designed to relieve pain, reduce muscle tension, improve mobility, and support recovery. This therapy may include deep tissue techniques, pressure point therapy, stretching, and focused muscle work to help restore balance and promote overall wellness.",
     pricing: [
       { duration: "60 minutes", price: "$110" },
       { duration: "90 minutes", price: "$140" },

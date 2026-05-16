@@ -76,6 +76,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_booking_availability: {
+        Args: {
+          p_booking_date: string
+        }
+        Returns: {
+          booking_time: string
+          package: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

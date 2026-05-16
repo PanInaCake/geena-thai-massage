@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 
@@ -12,6 +12,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import {
+  ALLOWED_TIME_SLOTS,
+  formatTimeSlotLabel,
+  getUnavailableTimeSlots,
+  isTimeSlotUnavailable,
+  type ExistingBooking,
+} from "@/lib/bookingAvailability";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,7 +32,6 @@ import {
   type MassageBookingPackageId,
 } from "@/constants/massageBooking";
 
-const ALLOWED_TIME_SLOTS = ["9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm"] as const;
 const DURATION_SELECT_VALUES = ["30", "45", "60", "90", "120"] as const;
 
 const bookingSchema = z
@@ -82,7 +88,7 @@ const Booking = () => {
     time: "",
     notes: "",
   });
-  const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
+  const [existingBookings, setExistingBookings] = useState<ExistingBooking[]>([]);
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -110,23 +116,45 @@ const Booking = () => {
     }
   };
 
+  const selectedDurationMinutes = formData.durationMinutes
+    ? Number(formData.durationMinutes)
+    : null;
+
+  const unavailableTimeSlots = useMemo(
+    () => getUnavailableTimeSlots(existingBookings, selectedDurationMinutes),
+    [existingBookings, selectedDurationMinutes],
+  );
+
   // Fetch existing bookings when date changes
   useEffect(() => {
     if (date) {
-      fetchBookedSlots(date);
+      fetchExistingBookings(date);
+    } else {
+      setExistingBookings([]);
     }
   }, [date]);
 
-  const fetchBookedSlots = async (selectedDate: Date) => {
+  // Clear time if it becomes unavailable (e.g. duration or date changed)
+  useEffect(() => {
+    if (
+      formData.time &&
+      isTimeSlotUnavailable(formData.time, selectedDurationMinutes, existingBookings)
+    ) {
+      setFormData((prev) => ({ ...prev, time: "" }));
+    }
+  }, [formData.time, selectedDurationMinutes, existingBookings]);
+
+  const fetchExistingBookings = async (selectedDate: Date) => {
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const { data, error } = await supabase.from("bookings").select("booking_time").eq("booking_date", formattedDate);
+      const { data, error } = await supabase.rpc("get_booking_availability", {
+        p_booking_date: formattedDate,
+      });
 
       if (error) throw error;
 
-      const slots = new Set(data?.map((booking) => booking.booking_time) || []);
-      setBookedSlots(slots);
-    } catch (error) {
+      setExistingBookings(data ?? []);
+    } catch {
       // Silently fail - user can try selecting date again
     }
   };
@@ -145,6 +173,18 @@ const Booking = () => {
     if (!validation.success) {
       const firstError = validation.error.errors[0];
       toast.error(firstError.message);
+      return;
+    }
+
+    if (
+      isTimeSlotUnavailable(
+        validation.data.time,
+        Number(validation.data.durationMinutes),
+        existingBookings,
+      )
+    ) {
+      toast.error("This time slot is no longer available. Please choose another time.");
+      if (date) await fetchExistingBookings(date);
       return;
     }
 
@@ -179,7 +219,7 @@ const Booking = () => {
         if (error.code === "23505") {
           toast.error("This time slot is no longer available. Please choose another time.");
           // Refresh the booked slots
-          await fetchBookedSlots(date);
+          await fetchExistingBookings(date);
         } else {
           toast.error("Failed to create booking. Please try again.");
         }
@@ -202,7 +242,7 @@ const Booking = () => {
       // Reset form
       setFormData({ name: "", email: "", package: "", durationMinutes: "", time: "", notes: "" });
       setDate(undefined);
-      setBookedSlots(new Set());
+      setExistingBookings([]);
     } catch (error) {
       toast.error("Failed to create booking. Please try again.");
     } finally {
@@ -233,18 +273,6 @@ const Booking = () => {
   const durationOptions = formData.package
     ? getMassageBookingPackage(formData.package)?.durations ?? []
     : [];
-
-  const timeSlotLabel: Record<(typeof ALLOWED_TIME_SLOTS)[number], string> = {
-    "9am": "9:00 AM",
-    "10am": "10:00 AM",
-    "11am": "11:00 AM",
-    "12pm": "12:00 PM",
-    "1pm": "1:00 PM",
-    "2pm": "2:00 PM",
-    "3pm": "3:00 PM",
-    "4pm": "4:00 PM",
-    "5pm": "5:00 PM",
-  };
 
   if (authLoading) {
     return (
@@ -383,16 +411,25 @@ const Booking = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="time">Preferred Time</Label>
-                  <Select value={formData.time} onValueChange={(value) => handleChange("time", value)}>
+                  <Select
+                    value={formData.time}
+                    onValueChange={(value) => handleChange("time", value)}
+                    disabled={!date}
+                  >
                     <SelectTrigger id="time">
-                      <SelectValue placeholder="Choose a time slot" />
+                      <SelectValue
+                        placeholder={date ? "Choose a time slot" : "Select a date first"}
+                      />
                     </SelectTrigger>
-                    <SelectContent className="bg-popover z-50">
-                      {ALLOWED_TIME_SLOTS.map((slot) => (
-                        <SelectItem key={slot} value={slot} disabled={bookedSlots.has(slot)}>
-                          {timeSlotLabel[slot]} {bookedSlots.has(slot) && "(Booked)"}
-                        </SelectItem>
-                      ))}
+                    <SelectContent className="bg-popover z-50 max-h-[min(60vh,24rem)]">
+                      {ALLOWED_TIME_SLOTS.map((slot) => {
+                        const unavailable = unavailableTimeSlots.has(slot);
+                        return (
+                          <SelectItem key={slot} value={slot} disabled={unavailable}>
+                            {formatTimeSlotLabel(slot)} {unavailable && "(Booked)"}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
