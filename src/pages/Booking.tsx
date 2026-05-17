@@ -235,7 +235,7 @@ const Booking = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(insertedBooking as BookingRow),
         }).catch(() => {
-          toast.error("Booking saved, but we couldn't send the notification email.");
+          toast.error("Booking saved, but we couldn't send the notification or add it to the calendar.");
         });
       }
 

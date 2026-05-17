@@ -1,5 +1,6 @@
 import * as nodemailer from "nodemailer";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { createBookingCalendarEvent, isGoogleCalendarConfigured } from "./lib/google-calendar";
 
 const DEFAULT_TO = "geenathaimassage@gmail.com";
 
@@ -174,9 +175,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     console.log("EMAIL SENT SUCCESSFULLY:", result);
 
+    let calendarEventId: string | null = null;
+    let calendarSkipped = false;
+    let calendarError: string | null = null;
+
+    if (isGoogleCalendarConfigured()) {
+      try {
+        console.log("Creating Google Calendar event...");
+        calendarEventId = await createBookingCalendarEvent({
+          id: payload.id!,
+          name: payload.name!,
+          email: payload.email!,
+          package: payload.package!,
+          booking_date: payload.booking_date!,
+          booking_time: payload.booking_time!,
+          notes: payload.notes,
+        });
+        console.log("Google Calendar event created:", calendarEventId);
+      } catch (calendarErr) {
+        calendarError =
+          calendarErr instanceof Error ? calendarErr.message : "Failed to create calendar event";
+        console.error("Google Calendar error:", calendarErr);
+      }
+    } else {
+      calendarSkipped = true;
+      console.log("Google Calendar skipped (not configured)");
+    }
+
     console.log("=== FUNCTION SUCCESS ===");
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({
+      ok: true,
+      email: true,
+      calendar: calendarEventId
+        ? { created: true, eventId: calendarEventId }
+        : calendarSkipped
+          ? { created: false, skipped: true }
+          : { created: false, error: calendarError },
+    });
 
   } catch (error) {
     console.error("=== FUNCTION ERROR ===");

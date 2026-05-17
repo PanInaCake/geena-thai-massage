@@ -14,7 +14,7 @@ import massage10 from "@/assets/massage-10.jpg";
 const packages = [
   {
     title: "Thai Massage (No Oil)",
-    description: "Traditional Thai massage using acupressure and stretching techniques without oil.",
+    description: "A traditional Thai that combines stretching and acupressure techniques to help relieve muscle tension, improve flexibility, increase blood circulation, and promote deep relaxation and overall well-being.",
     pricing: [
       { duration: "60 minutes", price: "$95" },
       { duration: "90 minutes", price: "$130" },
@@ -109,7 +109,7 @@ const packages = [
   },
   {
     title: "Hot Stone Massage",
-    description: "Heated basalt stones combined with massage techniques to melt away tension and promote deep relaxation.",
+    description: "Uses warm stones combined with warm oil to help relax muscles, improve blood circulation, reduce stress, and relieve body tension. The warmth of the stones provides deep relaxation and promotes overall well-being",
     pricing: [
       { duration: "90 minutes", price: "$145" }
     ],
@@ -117,7 +117,7 @@ const packages = [
   },
   {
     title: "Hot Herbal Massage",
-    description: "Traditional Thai herbal compress massage using heated herbs to soothe muscles and invigorate the senses.",
+    description: " Warm herbal Compress with warm oil massage helps relax muscles, relieve body tension, improve blood circulation, and promote deep relaxation. The warm herbal compress enhances comfort and refreshes both body and mind",
     pricing: [
       { duration: "90 minutes", price: "$145" }
     ],
