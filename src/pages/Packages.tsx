@@ -1,15 +1,17 @@
 import Navigation from "@/components/Navigation";
 import PackageCard from "@/components/PackageCard";
-import massage1 from "@/assets/massage-1.jpg";
-import massage2 from "@/assets/massage-2.jpg";
-import massage3 from "@/assets/massage-3.jpg";
-import massage4 from "@/assets/massage-4.jpg";
-import massage5 from "@/assets/massage-5.jpg";
-import massage6 from "@/assets/massage-6.jpg";
-import massage7 from "@/assets/massage-7.jpg";
-import massage8 from "@/assets/massage-8.jpg";
-import massage9 from "@/assets/massage-9.jpg";
-import massage10 from "@/assets/massage-10.jpg";
+import massageThaiTraditional from "@/assets/massage-thai-traditional.png";
+import massageThaiOil from "@/assets/massage-thai-oil.png";
+import massageDeepOil from "@/assets/massage-deep-oil.png";
+import massageAromatherapy from "@/assets/massage-aromatherapy.png";
+import massageNeckShoulder from "@/assets/massage-neck-shoulder.png";
+import massageHead from "@/assets/massage-head.png";
+import massageFoot from "@/assets/massage-foot.png";
+import massageFootSpa from "@/assets/massage-foot-spa.png";
+import massageBackScrub from "@/assets/massage-back-scrub.png";
+import massageTherapeutic from "@/assets/massage-therapeutic.png";
+import massageHotStone from "@/assets/massage-hot-stone.png";
+import massageHotHerbal from "@/assets/massage-hot-herbal.png";
 
 const packages = [
   {
@@ -20,7 +22,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massage1
+    image: massageThaiTraditional
   },
   {
     title: "Thai Oil Massage",
@@ -30,7 +32,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massage2
+    image: massageThaiOil
   },
   {
     title: "Deep Oil Massage",
@@ -40,7 +42,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massage3
+    image: massageDeepOil
   },
   {
     title: "Aromatherapy Massage",
@@ -50,7 +52,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massage4
+    image: massageAromatherapy
   },
   {
     title: "Back, Neck & Shoulder Massage",
@@ -60,7 +62,7 @@ const packages = [
       { duration: "45 minutes", price: "$75" },
       { duration: "60 minutes", price: "$100" }
     ],
-    image: massage5
+    image: massageNeckShoulder
   },
   {
     title: "Head Relaxation Massage",
@@ -70,7 +72,7 @@ const packages = [
       { duration: "45 minutes", price: "$70" },
       { duration: "60 minutes", price: "$95" }
     ],
-    image: massage6
+    image: massageHead
   },
   {
     title: "Foot Massage",
@@ -79,7 +81,7 @@ const packages = [
       { duration: "30 minutes", price: "$55" },
       { duration: "60 minutes", price: "$100" }
     ],
-    image: massage7
+    image: massageFoot
   },
   {
     title: "Foot Spa + Foot Massage",
@@ -87,7 +89,7 @@ const packages = [
     pricing: [
       { duration: "60 minutes", price: "$100" }
     ],
-    image: massage8
+    image: massageFootSpa
   },
   {
     title: "Back Scrub + Full Body Massage",
@@ -95,7 +97,7 @@ const packages = [
     pricing: [
       { duration: "90 minutes", price: "$150" }
     ],
-    image: massage9
+    image: massageBackScrub
   },
   {
     title: "Therapeutic Massage",
@@ -105,7 +107,7 @@ const packages = [
       { duration: "90 minutes", price: "$140" },
       { duration: "120 minutes", price: "$170" }
     ],
-    image: massage10
+    image: massageTherapeutic
   },
   {
     title: "Hot Stone Massage",
@@ -113,7 +115,7 @@ const packages = [
     pricing: [
       { duration: "90 minutes", price: "$145" }
     ],
-    image: massage4
+    image: massageHotStone
   },
   {
     title: "Hot Herbal Massage",
@@ -121,7 +123,7 @@ const packages = [
     pricing: [
       { duration: "90 minutes", price: "$145" }
     ],
-    image: massage6
+    image: massageHotHerbal
   }
 ];
 
