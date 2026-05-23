@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import aboutHero from "@/assets/about-hero.png";
-import aboutSpa from "@/assets/about-spa.png";
+import aboutHero from "@/assets/about-spa.png";
 import heroLogo from "@/assets/hero-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -55,7 +54,7 @@ const Index = () => {
         <div className="absolute inset-0 opacity-20">
           <img 
             src={aboutHero} 
-            alt="Geena Thai Massage therapist"
+            alt="Relaxing Thai massage at Geena Thai Massage"
             className="w-full h-full object-cover"
           />
         </div>
@@ -82,13 +81,6 @@ const Index = () => {
           <div className="space-y-12 animate-fade-in">
             <div>
               <h2 className="text-3xl font-bold font-serif mb-4 text-center">Our Story</h2>
-              <div className="mb-8 overflow-hidden rounded-lg shadow-gold max-w-2xl mx-auto">
-                <img
-                  src={aboutSpa}
-                  alt="Relaxing Thai massage treatment at Geena Thai Massage"
-                  className="w-full h-72 object-cover object-center"
-                />
-              </div>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Founded with a passion for authentic Thai healing traditions, Geena Thai Massage brings centuries-old therapeutic techniques to modern wellness seekers. Our skilled therapists are trained in traditional Thai massage methods, combining ancient wisdom with contemporary understanding of body mechanics and stress relief.
               </p>
