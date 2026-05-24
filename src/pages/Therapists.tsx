@@ -40,9 +40,6 @@ const Therapists = () => {
                   />
                 </div>
                 <div className="flex flex-col justify-center p-8 md:p-10 lg:p-12">
-                  <p className="text-sm uppercase tracking-widest text-accent font-medium mb-2">
-                    Lead Therapist
-                  </p>
                   <h2 className="text-3xl md:text-4xl font-bold font-serif mb-6">Geena</h2>
                   <p className="text-lg text-muted-foreground leading-relaxed">{GEENA_BIO}</p>
                 </div>
