@@ -146,6 +146,10 @@ type BookingEmailPayload = {
   booking_time: string; // e.g. 9am
   created_at?: string;
   notes?: string | null;
+  package_price?: string | null;
+  receipt_base64?: string | null;
+  receipt_filename?: string | null;
+  receipt_content_type?: string | null;
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -222,9 +226,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? payload.notes.trim()
       : "None";
 
+    const priceLine = payload.package_price?.trim() ? payload.package_price.trim() : "Not provided";
+
+    const emailAttachments: { filename: string; content: Buffer; contentType?: string }[] = [];
+    if (payload.receipt_base64?.trim()) {
+      try {
+        emailAttachments.push({
+          filename: payload.receipt_filename?.trim() || "payment-receipt.jpg",
+          content: Buffer.from(payload.receipt_base64, "base64"),
+          contentType: payload.receipt_content_type?.trim() || "image/jpeg",
+        });
+      } catch (attachErr) {
+        console.error("Failed to decode receipt attachment:", attachErr);
+      }
+    }
+
     console.log("Processed fields:", {
       createdAtLine,
       notesLine,
+      priceLine,
+      hasReceiptAttachment: emailAttachments.length > 0,
     });
 
     console.log("Creating transporter...");
@@ -257,6 +278,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       `Customer Email: ${payload.email}`,
       "",
       `Package: ${payload.package}`,
+      `Price: ${priceLine}`,
       `Date: ${payload.booking_date}`,
       `Time: ${payload.booking_time}`,
       `Created At: ${createdAtLine}`,
@@ -265,6 +287,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notesLine,
       "",
       `Reply-To: ${replyTo}`,
+      "",
+      emailAttachments.length > 0 ? "Payment receipt is attached to this email." : "No payment receipt was attached.",
     ].join("\n");
     
     const htmlBody = `
@@ -276,6 +300,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         <p><strong>Email:</strong> ${escapeHtml(payload.email!)}</p>
     
         <p><strong>Package:</strong> ${escapeHtml(payload.package!)}</p>
+        <p><strong>Price:</strong> ${escapeHtml(priceLine)}</p>
         <p><strong>Date:</strong> ${escapeHtml(payload.booking_date!)}</p>
         <p><strong>Time:</strong> ${escapeHtml(payload.booking_time!)}</p>
         <p><strong>Created At:</strong> ${escapeHtml(createdAtLine)}</p>
@@ -295,6 +320,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       subject,
       text: textBody,
       html: htmlBody,
+      attachments: emailAttachments,
     });
 
     console.log("EMAIL SENT SUCCESSFULLY:", result);
