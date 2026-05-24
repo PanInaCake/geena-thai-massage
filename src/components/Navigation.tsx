@@ -71,6 +71,15 @@ const Navigation = () => {
                 Packages
               </Button>
             </Link>
+
+            <Link to="/therapists">
+              <Button 
+                variant={location.pathname === "/therapists" ? "secondary" : "ghost"}
+                className="transition-smooth"
+              >
+                Our Therapists
+              </Button>
+            </Link>
             
             <Link to="/booking">
               <Button 
@@ -141,6 +150,16 @@ const Navigation = () => {
               className="text-2xl py-6 px-8 transition-smooth"
             >
               Packages
+            </Button>
+          </Link>
+
+          <Link to="/therapists" onClick={handleNavClick}>
+            <Button 
+              variant={location.pathname === "/therapists" ? "secondary" : "ghost"}
+              size="lg"
+              className="text-2xl py-6 px-8 transition-smooth"
+            >
+              Our Therapists
             </Button>
           </Link>
           
