@@ -1,11 +1,10 @@
 import { format, parse } from "date-fns";
 
-export const BOOKING_OPEN_MINUTES = 9 * 60; // 9:00 AM
+export const BOOKING_OPEN_MINUTES = 10 * 60; // 9:00 AM
 export const BOOKING_CLOSE_MINUTES = 17 * 60; // 5:00 PM
 export const TIME_SLOT_INCREMENT_MINUTES = 15;
 
 const LEGACY_BOOKING_TIME_MINUTES: Record<string, number> = {
-  "9am": 9 * 60,
   "10am": 10 * 60,
   "11am": 11 * 60,
   "12pm": 12 * 60,
