@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ImagePlus, X } from "lucide-react";
 import { format } from "date-fns";
 import {
   ALLOWED_TIME_SLOTS,
@@ -26,11 +26,34 @@ import { z } from "zod";
 import {
   BOOKING_PACKAGE_IDS,
   formatBookingPackageForDb,
+  formatBookingPrice,
+  getBookingPrice,
   getMassageBookingPackage,
   massagePackageAllowsDuration,
   MASSAGE_BOOKING_PACKAGES,
   type MassageBookingPackageId,
 } from "@/constants/massageBooking";
+
+const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
+const RECEIPT_ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif";
+
+type ReceiptFile = {
+  file: File;
+  previewUrl: string;
+};
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.includes(",") ? result.split(",")[1] : result;
+      resolve(base64);
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
 
 const DURATION_SELECT_VALUES = ["30", "45", "60", "90", "120"] as const;
 
@@ -92,6 +115,8 @@ const Booking = () => {
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [receipt, setReceipt] = useState<ReceiptFile | null>(null);
+  const [isReceiptDragOver, setIsReceiptDragOver] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -229,11 +254,36 @@ const Booking = () => {
       toast.success("Booking confirmed! We'll contact you soon.");
 
       if (insertedBooking) {
+        let receiptPayload: {
+          receipt_base64?: string;
+          receipt_filename?: string;
+          receipt_content_type?: string;
+        } = {};
+
+        if (receipt) {
+          try {
+            receiptPayload = {
+              receipt_base64: await fileToBase64(receipt.file),
+              receipt_filename: receipt.file.name,
+              receipt_content_type: receipt.file.type || "image/jpeg",
+            };
+          } catch {
+            toast.error("Booking saved, but the receipt could not be read for email.");
+          }
+        }
+
+        const priceLabel =
+          selectedPackagePrice !== null ? formatBookingPrice(selectedPackagePrice) : undefined;
+
         // Fire-and-forget email; do not block the booking confirmation.
         void fetch("/api/send-booking-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(insertedBooking as BookingRow),
+          body: JSON.stringify({
+            ...(insertedBooking as BookingRow),
+            package_price: priceLabel,
+            ...receiptPayload,
+          }),
         }).catch(() => {
           toast.error("Booking saved, but we couldn't send the notification or add it to the calendar.");
         });
@@ -241,6 +291,7 @@ const Booking = () => {
 
       // Reset form
       setFormData({ name: "", email: "", package: "", durationMinutes: "", time: "", notes: "" });
+      setReceiptFile(null);
       setDate(undefined);
       setExistingBookings([]);
     } catch (error) {
@@ -273,6 +324,42 @@ const Booking = () => {
   const durationOptions = formData.package
     ? getMassageBookingPackage(formData.package)?.durations ?? []
     : [];
+
+  const selectedPackagePrice = useMemo(() => {
+    if (!formData.package || !formData.durationMinutes) return null;
+    return getBookingPrice(
+      formData.package as MassageBookingPackageId,
+      Number(formData.durationMinutes),
+    );
+  }, [formData.package, formData.durationMinutes]);
+
+  const setReceiptFile = (file: File | null) => {
+    setReceipt((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      if (!file) return null;
+      return { file, previewUrl: URL.createObjectURL(file) };
+    });
+  };
+
+  const handleReceiptSelect = (fileList: FileList | null) => {
+    const file = fileList?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPEG, PNG, or WebP).");
+      return;
+    }
+    if (file.size > MAX_RECEIPT_BYTES) {
+      toast.error("Receipt image must be 5 MB or smaller.");
+      return;
+    }
+    setReceiptFile(file);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (receipt) URL.revokeObjectURL(receipt.previewUrl);
+    };
+  }, [receipt]);
 
   if (authLoading) {
     return (
@@ -375,11 +462,16 @@ const Booking = () => {
                       />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      {durationOptions.map((mins) => (
-                        <SelectItem key={mins} value={String(mins)}>
-                          {mins} minutes
-                        </SelectItem>
-                      ))}
+                      {durationOptions.map((mins) => {
+                        const price = formData.package
+                          ? getBookingPrice(formData.package as MassageBookingPackageId, mins)
+                          : null;
+                        return (
+                          <SelectItem key={mins} value={String(mins)}>
+                            {mins} minutes{price !== null ? ` — ${formatBookingPrice(price)}` : ""}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -443,6 +535,91 @@ const Booking = () => {
                     onChange={(e) => handleChange("notes", e.target.value)}
                     className="transition-smooth focus:scale-[1.01] min-h-[100px]"
                   />
+                </div>
+
+                {formData.package && formData.durationMinutes && (
+                  <div className="rounded-lg border bg-muted/40 p-4 space-y-1">
+                    <p className="text-sm text-muted-foreground">Package total</p>
+                    <p className="text-lg font-semibold">
+                      {getMassageBookingPackage(formData.package)?.label} · {formData.durationMinutes}{" "}
+                      minutes
+                    </p>
+                    <p className="text-2xl font-bold text-accent">
+                      {selectedPackagePrice !== null
+                        ? formatBookingPrice(selectedPackagePrice)
+                        : "—"}
+                    </p>
+                  </div>
+                )}
+
+                <div className="rounded-lg border border-accent/30 bg-accent/5 p-4 space-y-2">
+                  <p className="text-sm font-medium">Bank transfer (ASB)</p>
+                  <p className="text-base leading-relaxed">
+                    ASB Account no. <span className="font-semibold">12-3680-0050311-00</span>
+                    <br />
+                    Geena Thai Massage
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Please pay the amount above, then upload your online payment receipt below.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="receipt">Payment receipt (optional)</Label>
+                  <div
+                    className={cn(
+                      "relative rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+                      isReceiptDragOver ? "border-accent bg-accent/10" : "border-border bg-muted/20",
+                    )}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsReceiptDragOver(true);
+                    }}
+                    onDragLeave={() => setIsReceiptDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsReceiptDragOver(false);
+                      handleReceiptSelect(e.dataTransfer.files);
+                    }}
+                  >
+                    <input
+                      id="receipt"
+                      type="file"
+                      accept={RECEIPT_ACCEPT}
+                      className="sr-only"
+                      onChange={(e) => {
+                        handleReceiptSelect(e.target.files);
+                        e.target.value = "";
+                      }}
+                    />
+                    {receipt ? (
+                      <div className="space-y-3">
+                        <img
+                          src={receipt.previewUrl}
+                          alt="Payment receipt preview"
+                          className="mx-auto max-h-48 rounded-md object-contain"
+                        />
+                        <p className="text-sm text-muted-foreground truncate">{receipt.file.name}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setReceiptFile(null)}
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Remove receipt
+                        </Button>
+                      </div>
+                    ) : (
+                      <label htmlFor="receipt" className="cursor-pointer block space-y-2">
+                        <ImagePlus className="mx-auto h-10 w-10 text-muted-foreground" />
+                        <p className="text-sm font-medium">
+                          Drop your receipt here, or click to choose a file
+                        </p>
+                        <p className="text-xs text-muted-foreground">JPEG, PNG, or WebP · max 5 MB</p>
+                      </label>
+                    )}
+                  </div>
                 </div>
 
                 <Button
