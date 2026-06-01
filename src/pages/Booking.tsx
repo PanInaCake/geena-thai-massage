@@ -33,6 +33,7 @@ import {
   MASSAGE_BOOKING_PACKAGES,
   type MassageBookingPackageId,
 } from "@/constants/massageBooking";
+import { getCalendarBlockedSlots } from "@/services/calendarService";
 
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
 const RECEIPT_ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif";
@@ -150,10 +151,10 @@ const Booking = () => {
     [existingBookings, selectedDurationMinutes],
   );
 
-  // Fetch existing bookings when date changes
+  // Fetch existing bookings and calendar events when date changes
   useEffect(() => {
     if (date) {
-      fetchExistingBookings(date);
+      fetchExistingBookingsAndCalendarEvents(date);
     } else {
       setExistingBookings([]);
     }
@@ -169,18 +170,26 @@ const Booking = () => {
     }
   }, [formData.time, selectedDurationMinutes, existingBookings]);
 
-  const fetchExistingBookings = async (selectedDate: Date) => {
+  const fetchExistingBookingsAndCalendarEvents = async (selectedDate: Date) => {
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const { data, error } = await supabase.rpc("get_booking_availability", {
+      
+      // Fetch database bookings
+      const { data: dbBookings, error } = await supabase.rpc("get_booking_availability", {
         p_booking_date: formattedDate,
       });
 
       if (error) throw error;
 
-      setExistingBookings(data ?? []);
-    } catch {
-      // Silently fail - user can try selecting date again
+      // Fetch calendar-blocked slots
+      const calendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
+
+      // Combine calendar events and database bookings
+      const allBookings = [...(dbBookings ?? []), ...calendarBlockedSlots];
+      setExistingBookings(allBookings);
+    } catch (error) {
+      console.error("Failed to fetch bookings:", error);
+      toast.error("Failed to load availability. Please try again.");
     }
   };
 
@@ -209,7 +218,7 @@ const Booking = () => {
       )
     ) {
       toast.error("This time slot is no longer available. Please choose another time.");
-      if (date) await fetchExistingBookings(date);
+      if (date) await fetchExistingBookingsAndCalendarEvents(date);
       return;
     }
 
@@ -244,7 +253,7 @@ const Booking = () => {
         if (error.code === "23505") {
           toast.error("This time slot is no longer available. Please choose another time.");
           // Refresh the booked slots
-          await fetchExistingBookings(date);
+          await fetchExistingBookingsAndCalendarEvents(date);
         } else {
           toast.error("Failed to create booking. Please try again.");
         }
