@@ -67,6 +67,11 @@ const bookingSchema = z
       .max(100, "Name must be less than 100 characters")
       .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
     email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+    phone: z
+      .string()
+      .trim()
+      .min(1, "Phone number is required")
+      .regex(/^[\d\s\-\+\(\)]+$/, "Phone number is invalid"),
     package: z.enum(BOOKING_PACKAGE_IDS, {
       errorMap: () => ({ message: "Please select a service" }),
     }),
@@ -95,6 +100,7 @@ type BookingRow = {
   user_id: string | null;
   name: string;
   email: string;
+  phone: string;
   package: string;
   booking_date: string; // yyyy-MM-dd
   booking_time: string;
@@ -107,6 +113,7 @@ const Booking = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     package: "",
     durationMinutes: "",
     time: "",
@@ -201,6 +208,11 @@ const Booking = () => {
       return;
     }
 
+    if (!receipt) {
+      toast.error("Payment receipt is required");
+      return;
+    }
+
     // Validate all inputs
     const validation = bookingSchema.safeParse(formData);
 
@@ -240,6 +252,7 @@ const Booking = () => {
           user_id: userId,
           name: validatedData.name,
           email: validatedData.email,
+          phone: validatedData.phone,
           package: packageSummary,
           booking_date: formattedDate,
           booking_time: validatedData.time,
@@ -299,7 +312,7 @@ const Booking = () => {
       }
 
       // Reset form
-      setFormData({ name: "", email: "", package: "", durationMinutes: "", time: "", notes: "" });
+      setFormData({ name: "", email: "", phone: "", package: "", durationMinutes: "", time: "", notes: "" });
       setReceiptFile(null);
       setDate(undefined);
       setExistingBookings([]);
@@ -443,6 +456,19 @@ const Booking = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Your phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                    className="transition-smooth focus:scale-[1.01]"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="package">Select service</Label>
                   <Select value={formData.package} onValueChange={handlePackageChange}>
                     <SelectTrigger id="package">
@@ -574,7 +600,7 @@ const Booking = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="receipt">Payment receipt (optional)</Label>
+                  <Label htmlFor="receipt">Payment receipt</Label>
                   <div
                     className={cn(
                       "relative rounded-lg border-2 border-dashed p-6 text-center transition-colors",
