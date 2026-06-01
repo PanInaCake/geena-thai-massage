@@ -20,6 +20,11 @@ export type ExistingBooking = {
   package: string;
 };
 
+export type CalendarEvent = {
+  start: Date;
+  end: Date;
+};
+
 export function buildAllowedTimeSlots(): [string, ...string[]] {
   const slots: string[] = [];
   for (
@@ -59,6 +64,28 @@ export function parseDurationFromPackage(packageSummary: string): number {
 
 function intervalsOverlap(aStart: number, aDuration: number, bStart: number, bDuration: number): boolean {
   return aStart < bStart + bDuration && bStart < aStart + aDuration;
+}
+
+/**
+ * Convert calendar events to blocked booking entries for availability checking.
+ * Calendar events take absolute priority and cannot be overridden by bookings.
+ */
+export function convertCalendarEventsToBlockedSlots(calendarEvents: CalendarEvent[]): ExistingBooking[] {
+  return calendarEvents.map((event) => {
+    const startMinutes = event.start.getHours() * 60 + event.start.getMinutes();
+    const endMinutes = event.end.getHours() * 60 + event.end.getMinutes();
+    const durationMinutes = Math.max(1, endMinutes - startMinutes);
+
+    // Format time as HH:mm
+    const hours = Math.floor(startMinutes / 60);
+    const minutes = startMinutes % 60;
+    const timeStr = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+
+    return {
+      booking_time: timeStr,
+      package: `Calendar Event (${durationMinutes} min)`,
+    };
+  });
 }
 
 export function isTimeSlotUnavailable(
