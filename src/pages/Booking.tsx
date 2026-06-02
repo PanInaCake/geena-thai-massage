@@ -33,6 +33,7 @@ import {
   MASSAGE_BOOKING_PACKAGES,
   type MassageBookingPackageId,
 } from "@/constants/massageBooking";
+import { getCalendarBlockedSlots } from "@/services/calendarService";
 
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
 const RECEIPT_ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif";
@@ -66,6 +67,11 @@ const bookingSchema = z
       .max(100, "Name must be less than 100 characters")
       .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
     email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+    phone: z
+      .string()
+      .trim()
+      .min(1, "Phone number is required")
+      .regex(/^[\d\s\-\+\(\)]+$/, "Phone number is invalid"),
     package: z.enum(BOOKING_PACKAGE_IDS, {
       errorMap: () => ({ message: "Please select a service" }),
     }),
@@ -94,6 +100,7 @@ type BookingRow = {
   user_id: string | null;
   name: string;
   email: string;
+  phone: string;
   package: string;
   booking_date: string; // yyyy-MM-dd
   booking_time: string;
@@ -106,6 +113,7 @@ const Booking = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     package: "",
     durationMinutes: "",
     time: "",
@@ -150,10 +158,10 @@ const Booking = () => {
     [existingBookings, selectedDurationMinutes],
   );
 
-  // Fetch existing bookings when date changes
+  // Fetch existing bookings and calendar events when date changes
   useEffect(() => {
     if (date) {
-      fetchExistingBookings(date);
+      fetchExistingBookingsAndCalendarEvents(date);
     } else {
       setExistingBookings([]);
     }
@@ -169,18 +177,26 @@ const Booking = () => {
     }
   }, [formData.time, selectedDurationMinutes, existingBookings]);
 
-  const fetchExistingBookings = async (selectedDate: Date) => {
+  const fetchExistingBookingsAndCalendarEvents = async (selectedDate: Date) => {
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const { data, error } = await supabase.rpc("get_booking_availability", {
+      
+      // Fetch database bookings
+      const { data: dbBookings, error } = await supabase.rpc("get_booking_availability", {
         p_booking_date: formattedDate,
       });
 
       if (error) throw error;
 
-      setExistingBookings(data ?? []);
-    } catch {
-      // Silently fail - user can try selecting date again
+      // Fetch calendar-blocked slots
+      const calendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
+
+      // Combine calendar events and database bookings
+      const allBookings = [...(dbBookings ?? []), ...calendarBlockedSlots];
+      setExistingBookings(allBookings);
+    } catch (error) {
+      console.error("Failed to fetch bookings:", error);
+      toast.error("Failed to load availability. Please try again.");
     }
   };
 
@@ -189,6 +205,11 @@ const Booking = () => {
 
     if (!date) {
       toast.error("Please select a date");
+      return;
+    }
+
+    if (!receipt) {
+      toast.error("Payment receipt is required");
       return;
     }
 
@@ -209,7 +230,7 @@ const Booking = () => {
       )
     ) {
       toast.error("This time slot is no longer available. Please choose another time.");
-      if (date) await fetchExistingBookings(date);
+      if (date) await fetchExistingBookingsAndCalendarEvents(date);
       return;
     }
 
@@ -231,6 +252,7 @@ const Booking = () => {
           user_id: userId,
           name: validatedData.name,
           email: validatedData.email,
+          phone: validatedData.phone,
           package: packageSummary,
           booking_date: formattedDate,
           booking_time: validatedData.time,
@@ -244,7 +266,7 @@ const Booking = () => {
         if (error.code === "23505") {
           toast.error("This time slot is no longer available. Please choose another time.");
           // Refresh the booked slots
-          await fetchExistingBookings(date);
+          await fetchExistingBookingsAndCalendarEvents(date);
         } else {
           toast.error("Failed to create booking. Please try again.");
         }
@@ -290,7 +312,7 @@ const Booking = () => {
       }
 
       // Reset form
-      setFormData({ name: "", email: "", package: "", durationMinutes: "", time: "", notes: "" });
+      setFormData({ name: "", email: "", phone: "", package: "", durationMinutes: "", time: "", notes: "" });
       setReceiptFile(null);
       setDate(undefined);
       setExistingBookings([]);
@@ -434,6 +456,19 @@ const Booking = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Your phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                    className="transition-smooth focus:scale-[1.01]"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="package">Select service</Label>
                   <Select value={formData.package} onValueChange={handlePackageChange}>
                     <SelectTrigger id="package">
@@ -565,7 +600,7 @@ const Booking = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="receipt">Payment receipt (optional)</Label>
+                  <Label htmlFor="receipt">Payment receipt</Label>
                   <div
                     className={cn(
                       "relative rounded-lg border-2 border-dashed p-6 text-center transition-colors",
