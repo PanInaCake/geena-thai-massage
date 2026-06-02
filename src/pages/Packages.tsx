@@ -1,17 +1,17 @@
 import Navigation from "@/components/Navigation";
 import PackageCard from "@/components/PackageCard";
-import massageThaiTraditional from "@/assets/massage-thai-traditional.png";
-import massageThaiOil from "@/assets/massage-thai-oil.png";
-import massageDeepOil from "@/assets/massage-deep-oil.png";
-import massageAromatherapy from "@/assets/massage-aromatherapy.png";
-import massageNeckShoulder from "@/assets/massage-neck-shoulder.png";
-import massageHead from "@/assets/massage-head.png";
-import massageFoot from "@/assets/massage-foot.png";
-import massageFootSpa from "@/assets/massage-foot-spa.png";
-import massageBackScrub from "@/assets/massage-back-scrub.png";
-import massageTherapeutic from "@/assets/massage-therapeutic.png";
-import massageHotStone from "@/assets/massage-hot-stone.png";
-import massageHotHerbal from "@/assets/massage-hot-herbal.png";
+import massageThaiNoOil from "@/assets/massage-thai-no-oil.jpg";
+import massageThaiOil from "@/assets/massage-thai-oil.jpg";
+import massageDeepOil from "@/assets/massage-deep-oil.jpg";
+import massageAromatherapy from "@/assets/massage-aromatherapy.jpg";
+import massageNeckShoulder from "@/assets/massage-neck-shoulder.jpg";
+import massageHead from "@/assets/massage-head.jpg";
+import massageFoot from "@/assets/massage-foot.jpg";
+import massageFootSpa from "@/assets/massage-foot-spa.jpg";
+import massageBackScrub from "@/assets/massage-back-scrub.jpg";
+import massageTherapeutic from "@/assets/massage-therapeutic.jpg";
+import massageHotStone from "@/assets/massage-hot-stone.jpg";
+import massageHotHerbal from "@/assets/massage-hot-herbal.jpg";
 
 const packages = [
   {
@@ -22,7 +22,7 @@ const packages = [
       { duration: "90 minutes", price: "$130" },
       { duration: "120 minutes", price: "$160" }
     ],
-    image: massageThaiTraditional
+    image: massageThaiNoOil
   },
   {
     title: "Thai Oil Massage",
