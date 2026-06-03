@@ -186,3 +186,18 @@ export function getUnavailableTimeSlots(
   }
   return unavailable;
 }
+
+/**
+ * Check if a date is completely booked (all time slots are unavailable).
+ * Returns true if all available time slots for the day are booked.
+ */
+export function isDateFullyBooked(
+  existingBookings: ExistingBooking[],
+): boolean {
+  for (const slot of ALLOWED_TIME_SLOTS) {
+    if (!isTimeSlotUnavailable(slot, null, existingBookings)) {
+      return false;
+    }
+  }
+  return true;
+}
