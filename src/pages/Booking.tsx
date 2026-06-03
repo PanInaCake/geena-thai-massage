@@ -17,6 +17,7 @@ import {
   formatTimeSlotLabel,
   getUnavailableTimeSlots,
   isTimeSlotUnavailable,
+  isDateFullyBooked,
   type ExistingBooking,
 } from "@/lib/bookingAvailability";
 import { cn } from "@/lib/utils";
@@ -120,6 +121,7 @@ const Booking = () => {
     notes: "",
   });
   const [existingBookings, setExistingBookings] = useState<ExistingBooking[]>([]);
+  const [bookingsByDate, setBookingsByDate] = useState<Map<string, ExistingBooking[]>>(new Map());
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -129,6 +131,8 @@ const Booking = () => {
 
   useEffect(() => {
     checkAuth();
+    // Load bookings for upcoming dates for calendar display
+    loadBookingsForCalendarDisplay();
   }, []);
 
   const checkAuth = async () => {
@@ -146,6 +150,41 @@ const Booking = () => {
       setUserId(user.id);
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const loadBookingsForCalendarDisplay = async () => {
+    try {
+      // Fetch bookings for the next 60 days to show on calendar
+      const today = new Date();
+      const endDate = new Date(today);
+      endDate.setDate(endDate.getDate() + 60);
+
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("booking_date, booking_time, package")
+        .gte("booking_date", format(today, "yyyy-MM-dd"))
+        .lte("booking_date", format(endDate, "yyyy-MM-dd"));
+
+      if (error) throw error;
+
+      // Organize bookings by date
+      const byDate = new Map<string, ExistingBooking[]>();
+      if (data) {
+        for (const booking of data) {
+          const dateKey = booking.booking_date;
+          if (!byDate.has(dateKey)) {
+            byDate.set(dateKey, []);
+          }
+          byDate.get(dateKey)!.push({
+            booking_time: booking.booking_time,
+            package: booking.package,
+          });
+        }
+      }
+      setBookingsByDate(byDate);
+    } catch (error) {
+      console.error("Failed to load calendar bookings:", error);
     }
   };
 
@@ -310,6 +349,9 @@ const Booking = () => {
           toast.error("Booking saved, but we couldn't send the notification or add it to the calendar.");
         });
       }
+
+      // Reload calendar bookings to update display
+      await loadBookingsForCalendarDisplay();
 
       // Reset form
       setFormData({ name: "", email: "", phone: "", package: "", durationMinutes: "", time: "", notes: "" });
@@ -529,11 +571,42 @@ const Booking = () => {
                         selected={date}
                         onSelect={setDate}
                         initialFocus
-                        disabled={(date) => date < new Date()}
+                        disabled={(checkDate) => {
+                          if (checkDate < new Date()) return true;
+                          const dateStr = format(checkDate, "yyyy-MM-dd");
+                          const bookings = bookingsByDate.get(dateStr) || [];
+                          return isDateFullyBooked(bookings);
+                        }}
+                        modifiers={{
+                          fullyBooked: (checkDate) => {
+                            const dateStr = format(checkDate, "yyyy-MM-dd");
+                            const bookings = bookingsByDate.get(dateStr) || [];
+                            return isDateFullyBooked(bookings);
+                          },
+                          partiallyBooked: (checkDate) => {
+                            const dateStr = format(checkDate, "yyyy-MM-dd");
+                            const bookings = bookingsByDate.get(dateStr) || [];
+                            return bookings.length > 0 && !isDateFullyBooked(bookings);
+                          },
+                        }}
+                        modifiersClassNames={{
+                          fullyBooked: "bg-destructive/20 text-foreground opacity-50 cursor-not-allowed",
+                          partiallyBooked: "bg-yellow-100/40 text-foreground font-semibold",
+                        }}
                         className={cn("p-3 pointer-events-auto")}
                       />
                     </PopoverContent>
                   </Popover>
+                  <p className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-3 h-3 bg-yellow-100 border border-yellow-400 rounded"></span>
+                      <span>Some slots available</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-3 h-3 bg-destructive/20 border border-destructive rounded"></span>
+                      <span>Fully booked (unavailable)</span>
+                    </div>
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -553,7 +626,9 @@ const Booking = () => {
                         const unavailable = unavailableTimeSlots.has(slot);
                         return (
                           <SelectItem key={slot} value={slot} disabled={unavailable}>
-                            {formatTimeSlotLabel(slot)} {unavailable && "(Booked)"}
+                            <span className={unavailable ? "opacity-50" : ""}>
+                              {formatTimeSlotLabel(slot)} {unavailable && "(Booked)"}
+                            </span>
                           </SelectItem>
                         );
                       })}
