@@ -5,25 +5,26 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 const DEFAULT_TO = "geenathaimassage@gmail.com";
 const CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar";
 
-const LEGACY_BOOKING_TIME_MINUTES: Record<string, number> = {
-  "9am": 9 * 60,
-  "10am": 10 * 60,
-  "11am": 11 * 60,
-  "12pm": 12 * 60,
-  "1pm": 13 * 60,
-  "2pm": 14 * 60,
-  "3pm": 15 * 60,
-  "4pm": 16 * 60,
-  "5pm": 17 * 60,
-};
-
+// Time parsing utilities
 function parseBookingTimeToMinutes(time: string): number | null {
   if (/^\d{2}:\d{2}$/.test(time)) {
     const [hours, minutes] = time.split(":").map(Number);
     return hours * 60 + minutes;
   }
-  const legacy = LEGACY_BOOKING_TIME_MINUTES[time.toLowerCase()];
-  return legacy ?? null;
+  
+  const legacyMap: Record<string, number> = {
+    "9am": 9 * 60,
+    "10am": 10 * 60,
+    "11am": 11 * 60,
+    "12pm": 12 * 60,
+    "1pm": 13 * 60,
+    "2pm": 14 * 60,
+    "3pm": 15 * 60,
+    "4pm": 16 * 60,
+    "5pm": 17 * 60,
+  };
+  
+  return legacyMap[time.toLowerCase()] ?? null;
 }
 
 function parseDurationFromPackage(packageSummary: string): number {
@@ -36,13 +37,16 @@ function getBookingDateTimeRange(bookingDate: string, bookingTime: string, packa
   if (startMinutes === null) {
     throw new Error(`Invalid booking time: ${bookingTime}`);
   }
+
   const durationMinutes = parseDurationFromPackage(packageSummary);
   const endMinutes = startMinutes + durationMinutes;
+
   const pad2 = (n: number) => String(n).padStart(2, "0");
   const startHours = Math.floor(startMinutes / 60);
   const startMins = startMinutes % 60;
   const endHours = Math.floor(endMinutes / 60);
   const endMins = endMinutes % 60;
+
   return {
     startDateTime: `${bookingDate}T${pad2(startHours)}:${pad2(startMins)}:00`,
     endDateTime: `${bookingDate}T${pad2(endHours)}:${pad2(endMins)}:00`,
@@ -61,11 +65,13 @@ function getServiceAccountCredentials(): ServiceAccountCredentials | null {
       return null;
     }
   }
+
   const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
   if (clientEmail && privateKey) {
     return { client_email: clientEmail, private_key: privateKey };
   }
+
   return null;
 }
 
@@ -99,6 +105,7 @@ async function createBookingCalendarEvent(payload: {
     credentials,
     scopes: [CALENDAR_SCOPE],
   });
+
   const calendar = google.calendar({ version: "v3", auth });
   const notesBlock = payload.notes?.trim() ? `\n\nNotes:\n${payload.notes.trim()}` : "";
 
@@ -143,7 +150,7 @@ type BookingEmailPayload = {
   email: string;
   package: string;
   booking_date: string; // yyyy-MM-dd
-  booking_time: string; // e.g. 9am
+  booking_time: string; // e.g. HH:mm or legacy format like "9am"
   created_at?: string;
   notes?: string | null;
   package_price?: string | null;
@@ -218,13 +225,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     console.log("Subject:", subject);
 
-    const createdAtLine = payload.created_at
-      ? new Date(payload.created_at).toLocaleString()
-      : "N/A";
+    const createdAtLine = payload.created_at ? new Date(payload.created_at).toLocaleString() : "N/A";
 
-    const notesLine = payload.notes?.trim()
-      ? payload.notes.trim()
-      : "None";
+    const notesLine = payload.notes?.trim() ? payload.notes.trim() : "None";
 
     const priceLine = payload.package_price?.trim() ? payload.package_price.trim() : "Not provided";
 
@@ -288,9 +291,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "",
       `Reply-To: ${replyTo}`,
       "",
-      emailAttachments.length > 0 ? "Payment receipt is attached to this email." : "No payment receipt was attached.",
+      emailAttachments.length > 0
+        ? "Payment receipt is attached to this email."
+        : "No payment receipt was attached.",
     ].join("\n");
-    
+
     const htmlBody = `
       <div style="font-family: Arial, Helvetica, sans-serif; color: #111827; line-height: 1.5;">
         <h2>New booking received</h2>
@@ -363,7 +368,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           ? { created: false, skipped: true }
           : { created: false, error: calendarError },
     });
-
   } catch (error) {
     console.error("=== FUNCTION ERROR ===");
     console.error("FULL ERROR OBJECT:", error);
