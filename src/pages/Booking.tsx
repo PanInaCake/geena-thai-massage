@@ -18,6 +18,7 @@ import {
   getUnavailableTimeSlots,
   isTimeSlotUnavailable,
   isDateFullyBooked,
+  convertCalendarEventsToBlockedSlots,
   type ExistingBooking,
 } from "@/lib/bookingAvailability";
 import { cn } from "@/lib/utils";
@@ -155,12 +156,12 @@ const Booking = () => {
 
   const loadBookingsForCalendarDisplay = async () => {
     try {
-      // Fetch bookings for the next 60 days to show on calendar
       const today = new Date();
       const endDate = new Date(today);
       endDate.setDate(endDate.getDate() + 60);
 
-      const { data, error } = await supabase
+      // 1. Fetch Supabase Bookings
+      const { data: dbData, error } = await supabase
         .from("bookings")
         .select("booking_date, booking_time, package")
         .gte("booking_date", format(today, "yyyy-MM-dd"))
@@ -168,10 +169,15 @@ const Booking = () => {
 
       if (error) throw error;
 
-      // Organize bookings by date
+      // 2. Fetch Google Calendar Events (You will need to ensure your service supports a range)
+      // const rawCalendarEvents = await getCalendarEventsForRange(today, endDate);
+      // const formattedCalendarEvents = convertCalendarEventsToBlockedSlots(rawCalendarEvents);
+      // You'll also need a way to associate these formatted events with their specific 'booking_date'
+
       const byDate = new Map<string, ExistingBooking[]>();
-      if (data) {
-        for (const booking of data) {
+      
+      if (dbData) {
+        for (const booking of dbData) {
           const dateKey = booking.booking_date;
           if (!byDate.has(dateKey)) {
             byDate.set(dateKey, []);
@@ -182,6 +188,9 @@ const Booking = () => {
           });
         }
       }
+      
+      // 3. Push your Google Calendar events into the byDate Map here
+      
       setBookingsByDate(byDate);
     } catch (error) {
       console.error("Failed to load calendar bookings:", error);
@@ -228,10 +237,13 @@ const Booking = () => {
       if (error) throw error;
 
       // Fetch calendar-blocked slots
-      const calendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
+      const rawCalendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
+      
+      // FORMAT the calendar events so your logic can read them
+      const formattedCalendarSlots = convertCalendarEventsToBlockedSlots(rawCalendarBlockedSlots);
 
       // Combine calendar events and database bookings
-      const allBookings = [...(dbBookings ?? []), ...calendarBlockedSlots];
+      const allBookings = [...(dbBookings ?? []), ...formattedCalendarSlots];
       setExistingBookings(allBookings);
     } catch (error) {
       console.error("Failed to fetch bookings:", error);
