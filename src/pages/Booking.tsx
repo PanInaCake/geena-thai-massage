@@ -237,13 +237,11 @@ const Booking = () => {
       if (error) throw error;
 
       // Fetch calendar-blocked slots
-      const rawCalendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
-      
-      // FORMAT the calendar events so your logic can read them
-      const formattedCalendarSlots = convertCalendarEventsToBlockedSlots(rawCalendarBlockedSlots);
+      // (This function already converts them internally, so we just use the result directly)
+      const calendarBlockedSlots = await getCalendarBlockedSlots(formattedDate);
 
       // Combine calendar events and database bookings
-      const allBookings = [...(dbBookings ?? []), ...formattedCalendarSlots];
+      const allBookings = [...(dbBookings ?? []), ...calendarBlockedSlots];
       setExistingBookings(allBookings);
     } catch (error) {
       console.error("Failed to fetch bookings:", error);
