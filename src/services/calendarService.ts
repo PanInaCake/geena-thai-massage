@@ -6,7 +6,8 @@ import { convertCalendarEventsToBlockedSlots, type CalendarEvent } from "@/lib/b
  */
 export async function fetchCalendarEventsForDate(dateStr: string): Promise<CalendarEvent[]> {
   try {
-    const response = await fetch("/api/calendar-events", {
+    // FIX: Append the date parameter to the URL query string
+    const response = await fetch(`/api/calendar-events?date=${dateStr}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
