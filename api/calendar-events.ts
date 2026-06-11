@@ -42,18 +42,18 @@ async function fetchCalendarEvents(dateStr: string): Promise<Array<{ start: stri
 
   try {
     // Parse the date string (yyyy-MM-dd) and set time bounds for that day
-    const [year, month, day] = dateStr.split("-").map(Number);
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0);
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59);
+    // Replace the old startOfDay / endOfDay lines with this approach:
+  const timeMin = `${dateStr}T00:00:00+13:00`; // Captures early morning even during summer daylight saving
+  const timeMax = `${dateStr}T23:59:59+12:00`; // Captures late evening even during winter standard time
 
-    const response = await calendar.events.list({
-      calendarId,
-      timeMin: startOfDay.toISOString(),
-      timeMax: endOfDay.toISOString(),
-      singleEvents: true,
-      orderBy: "startTime",
-      timeZone,
-    });
+  const response = await calendar.events.list({
+    calendarId,
+    timeMin, // Use the literal timezone bound strings instead of .toISOString()
+    timeMax,
+    singleEvents: true,
+    orderBy: "startTime",
+    timeZone,
+  });
 
     const events = response.data.items ?? [];
 
