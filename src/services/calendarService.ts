@@ -19,8 +19,6 @@ export async function fetchCalendarEventsForDate(dateStr: string): Promise<Calen
     }
 
     const data = await response.json();
-    
-    // ADDED: Console log to inspect exactly what is coming back from the Google Calendar API
     console.log(`[Calendar Service] Events received for ${dateStr}:`, data.events);
     
     if (!data.events || !Array.isArray(data.events)) {
@@ -28,15 +26,30 @@ export async function fetchCalendarEventsForDate(dateStr: string): Promise<Calen
     }
 
     return data.events.map((event: any) => {
-      // FIX: Extract only the "YYYY-MM-DDTHH:mm:ss" part from the timestamp string (characters 0 to 19).
-      // By removing the timezone offset (like +12:00 or Z), the browser parses it as standard "wall-clock" time.
-      // This prevents slots from shifting around depending on the user's local device timezone.
-      const startLocalStr = typeof event.start === 'string' ? event.start.substring(0, 19) : event.start;
-      const endLocalStr = typeof event.end === 'string' ? event.end.substring(0, 19) : event.end;
-      
+      const startStr = typeof event.start === 'string' ? event.start : '';
+      const endStr = typeof event.end === 'string' ? event.end : '';
+
+      // Extract literal year, month, day, hour, and minute straight from the string text
+      const startMatch = startStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+      const endMatch = endStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+
+      if (startMatch && endMatch) {
+        const [_, sy, sm, sd, sh, smin] = startMatch.map(Number);
+        const [_, ey, em, ed, eh, emin] = endMatch.map(Number);
+
+        // Build Date objects using explicit wall-clock values.
+        // This guarantees .getHours() returns exactly what Google Calendar says,
+        // eliminating any client device timezone or seasonal DST discrepancies.
+        return {
+          start: new Date(sy, sm - 1, sd, sh, smin),
+          end: new Date(ey, em - 1, ed, eh, emin),
+        };
+      }
+
+      // Fallback if the string formatting deviates
       return {
-        start: new Date(startLocalStr),
-        end: new Date(endLocalStr),
+        start: new Date(event.start),
+        end: new Date(event.end),
       };
     });
   } catch (error) {
