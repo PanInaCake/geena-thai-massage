@@ -1,7 +1,7 @@
 import { format, parse } from "date-fns";
 
 export const BOOKING_OPEN_MINUTES = 10 * 60; // 10:00 AM
-export const BOOKING_CLOSE_MINUTES = 20 * 60; // 8:00 PM
+export const BOOKING_CLOSE_MINUTES = 19 * 60; // 7:00 PM (last bookable slot)
 export const TIME_SLOT_INCREMENT_MINUTES = 15;
 
 const LEGACY_BOOKING_TIME_MINUTES: Record<string, number> = {
