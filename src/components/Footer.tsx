@@ -35,7 +35,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <h4 className="text-sm font-light mb-3 opacity-70">Location</h4>
             <p className="text-sm leading-relaxed">
-              1412 Cameron Road, Greerton, Tauranga 3142
+              6 Linley Terrace, Judea, Tauranga 3110
             </p>
             <a 
               href="tel:0225396414" 
