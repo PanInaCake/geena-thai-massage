@@ -607,16 +607,6 @@ const Booking = () => {
                       />
                     </PopoverContent>
                   </Popover>
-                  <p className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-block w-3 h-3 bg-yellow-100 border border-yellow-400 rounded"></span>
-                      <span>Some slots available</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="inline-block w-3 h-3 bg-destructive/20 border border-destructive rounded"></span>
-                      <span>Fully booked (unavailable)</span>
-                    </div>
-                  </p>
                 </div>
 
                 <div className="space-y-2">
