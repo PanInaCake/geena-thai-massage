@@ -1,7 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import geenaPhoto from "@/assets/geena-therapist.png";
+import geenaPhoto from "@/assets/geena-therapist.jpg";
 
 const GEENA_BIO =
   "I graduated in Therapeutic Massage from the Ministry of Public Health, Thailand. I have over 25 years of experience working as a massage therapist and massage trainer in both Thailand and overseas.";
