@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import PackageCard from "@/components/PackageCard";
 import massageThaiNoOil from "@/assets/massage-thai-no-oil.jpg";
 import massageThaiOil from "@/assets/massage-thai-oil.jpg";
@@ -197,12 +198,7 @@ const Packages = () => {
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-accent"></div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-primary py-6 text-center">
-        <p className="text-primary-foreground text-sm">
-          © {new Date().getFullYear()} Geena Thai Massage. All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 };

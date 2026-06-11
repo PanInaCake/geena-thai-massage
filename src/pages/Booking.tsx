@@ -18,6 +18,7 @@ import {
   getUnavailableTimeSlots,
   isTimeSlotUnavailable,
   isDateFullyBooked,
+  isBookingDayOpen,
   convertCalendarEventsToBlockedSlots,
   type ExistingBooking,
 } from "@/lib/bookingAvailability";
@@ -254,6 +255,11 @@ const Booking = () => {
 
     if (!date) {
       toast.error("Please select a date");
+      return;
+    }
+
+    if (!isBookingDayOpen(date)) {
+      toast.error("Bookings are only available Friday through Tuesday.");
       return;
     }
 
@@ -582,7 +588,10 @@ const Booking = () => {
                         onSelect={setDate}
                         initialFocus
                         disabled={(checkDate) => {
-                          if (checkDate < new Date()) return true;
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          if (checkDate < today) return true;
+                          if (!isBookingDayOpen(checkDate)) return true;
                           const dateStr = format(checkDate, "yyyy-MM-dd");
                           const bookings = bookingsByDate.get(dateStr) || [];
                           return isDateFullyBooked(bookings);
