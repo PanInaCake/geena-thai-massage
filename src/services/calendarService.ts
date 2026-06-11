@@ -6,7 +6,6 @@ import { convertCalendarEventsToBlockedSlots, type CalendarEvent } from "@/lib/b
  */
 export async function fetchCalendarEventsForDate(dateStr: string): Promise<CalendarEvent[]> {
   try {
-    // FIX: Append the date parameter to the URL query string
     const response = await fetch(`/api/calendar-events?date=${dateStr}`, {
       method: "GET",
       headers: {
@@ -21,19 +20,25 @@ export async function fetchCalendarEventsForDate(dateStr: string): Promise<Calen
 
     const data = await response.json();
     
-    // Filter events for the selected date
-    const selectedDate = new Date(dateStr);
-    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+    // ADDED: Console log to inspect exactly what is coming back from the Google Calendar API
+    console.log(`[Calendar Service] Events received for ${dateStr}:`, data.events);
     
-    return (data.events || [])
-      .filter((event: any) => {
-        const eventDate = new Date(event.start).toISOString().split('T')[0];
-        return eventDate === selectedDateStr;
-      })
-      .map((event: any) => ({
-        start: new Date(event.start),
-        end: new Date(event.end),
-      }));
+    if (!data.events || !Array.isArray(data.events)) {
+      return [];
+    }
+
+    return data.events.map((event: any) => {
+      // FIX: Extract only the "YYYY-MM-DDTHH:mm:ss" part from the timestamp string (characters 0 to 19).
+      // By removing the timezone offset (like +12:00 or Z), the browser parses it as standard "wall-clock" time.
+      // This prevents slots from shifting around depending on the user's local device timezone.
+      const startLocalStr = typeof event.start === 'string' ? event.start.substring(0, 19) : event.start;
+      const endLocalStr = typeof event.end === 'string' ? event.end.substring(0, 19) : event.end;
+      
+      return {
+        start: new Date(startLocalStr),
+        end: new Date(endLocalStr),
+      };
+    });
   } catch (error) {
     console.error("Error fetching calendar events:", error);
     return [];
