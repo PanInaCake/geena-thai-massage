@@ -34,8 +34,8 @@ export async function fetchCalendarEventsForDate(dateStr: string): Promise<Calen
       const endMatch = endStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
 
       if (startMatch && endMatch) {
-        const [_, sy, sm, sd, sh, smin] = startMatch.map(Number);
-        const [_, ey, em, ed, eh, emin] = endMatch.map(Number);
+        const [, sy, sm, sd, sh, smin] = startMatch.map(Number);
+        const [, ey, em, ed, eh, emin] = endMatch.map(Number);
 
         // Build Date objects using explicit wall-clock values.
         // This guarantees .getHours() returns exactly what Google Calendar says,
