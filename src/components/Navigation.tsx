@@ -77,7 +77,7 @@ const Navigation = () => {
                 variant={location.pathname === "/therapists" ? "secondary" : "ghost"}
                 className="transition-smooth"
               >
-                Our Therapists
+                Our Therapist
               </Button>
             </Link>
             
