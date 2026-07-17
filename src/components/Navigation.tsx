@@ -40,7 +40,7 @@ const Navigation = () => {
       {/* Hamburger Menu Button - Mobile/Tablet Only */}
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="fixed top-6 left-6 z-[100] p-2 hover:bg-accent/10 rounded-md transition-smooth lg:hidden"
+        className="fixed top-[calc(var(--closure-notice-height,0px)+1.5rem)] left-6 z-[100] p-2 hover:bg-accent/10 rounded-md transition-smooth lg:hidden"
         aria-label="Toggle menu"
       >
         {isMenuOpen ? (
@@ -51,7 +51,7 @@ const Navigation = () => {
       </button>
 
       {/* Desktop Navbar - Large Screens Only */}
-      <nav className="hidden lg:flex fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <nav className="hidden lg:flex fixed top-[var(--closure-notice-height,0px)] left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/">
