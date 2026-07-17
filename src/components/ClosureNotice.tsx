@@ -24,11 +24,9 @@ const ClosureNotice = () => {
       className="w-full border-b-2 border-amber-600/40 bg-amber-100 px-4 py-5 md:px-8 md:py-6"
     >
       <div className="container mx-auto max-w-5xl text-center">
-        <p className="text-xl font-bold leading-snug text-primary md:text-2xl lg:text-3xl">
-          We will be temporarily closed from 12th of July until the 1st of August
-        </p>
+      <h2 className="text-xl font-extrabold leading-tight text-amber-900 whitespace-nowrap md:text-2xl lg:text-3xl">We are temporarily closed from 12th of July until the 1st of August</h2>
         <p className="mx-auto mt-3 max-w-4xl text-base leading-relaxed text-primary/90 md:mt-4 md:text-lg lg:text-xl">
-          We&apos;ll be temporarily closed for a short period due to unforeseen personal circumstances. We
+          We are temporarily closed for a short period due to unforeseen personal circumstances. We
           appreciate your patience and understanding during this time, and we look forward to welcoming you
           back on the 2nd of August.
         </p>
