@@ -83,6 +83,7 @@ async function createBookingCalendarEvent(payload: {
   id: string;
   name: string;
   email: string;
+  phone: string;
   package: string;
   booking_date: string;
   booking_time: string;
@@ -117,6 +118,7 @@ async function createBookingCalendarEvent(payload: {
         `Booking ID: ${payload.id}`,
         `Customer: ${payload.name}`,
         `Email: ${payload.email}`,
+        `Phone: ${payload.phone}`,
         `Service: ${payload.package}`,
         notesBlock,
       ]
@@ -148,6 +150,7 @@ type BookingEmailPayload = {
   id: string;
   name: string;
   email: string;
+  phone: string;
   package: string;
   booking_date: string; // yyyy-MM-dd
   booking_time: string; // e.g. HH:mm or legacy format like "9am"
@@ -279,6 +282,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       `Booking ID: ${payload.id}`,
       `Customer Name: ${payload.name}`,
       `Customer Email: ${payload.email}`,
+      `Customer Phone: ${payload.phone}`,
       "",
       `Package: ${payload.package}`,
       `Price: ${priceLine}`,
@@ -299,19 +303,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const htmlBody = `
       <div style="font-family: Arial, Helvetica, sans-serif; color: #111827; line-height: 1.5;">
         <h2>New booking received</h2>
-    
+
         <p><strong>Booking ID:</strong> ${escapeHtml(payload.id!)}</p>
         <p><strong>Name:</strong> ${escapeHtml(payload.name!)}</p>
         <p><strong>Email:</strong> ${escapeHtml(payload.email!)}</p>
-    
+        <p><strong>Phone:</strong> ${escapeHtml(payload.phone!)}</p>
+
         <p><strong>Package:</strong> ${escapeHtml(payload.package!)}</p>
         <p><strong>Price:</strong> ${escapeHtml(priceLine)}</p>
         <p><strong>Date:</strong> ${escapeHtml(payload.booking_date!)}</p>
         <p><strong>Time:</strong> ${escapeHtml(payload.booking_time!)}</p>
         <p><strong>Created At:</strong> ${escapeHtml(createdAtLine)}</p>
-    
+
         <p><strong>Notes:</strong><br/>${escapeHtml(notesLine)}</p>
-    
+
         <p style="margin-top: 16px; color: #6b7280;">
           Reply-to: ${escapeHtml(replyTo)}
         </p>
@@ -341,6 +346,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           id: payload.id!,
           name: payload.name!,
           email: payload.email!,
+          phone: payload.phone!,
           package: payload.package!,
           booking_date: payload.booking_date!,
           booking_time: payload.booking_time!,
