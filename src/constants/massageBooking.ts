@@ -52,7 +52,7 @@ export const BOOKING_PACKAGE_PRICES: Record<MassageBookingPackageId, Partial<Rec
   foot: { 30: 55, 60: 100 },
   "foot-spa-foot": { 60: 100 },
   "back-scrub": { 90: 150 },
-  therapeutic: { 60: 110, 90: 140, 120: 170 },
+  therapeutic: { 60: 110, 90: 140, 120: 180 },
   "hot-stone": { 90: 145 },
   "hot-herbal": { 90: 145 },
 };

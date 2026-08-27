@@ -106,7 +106,7 @@ const packages = [
     pricing: [
       { duration: "60 minutes", price: "$110" },
       { duration: "90 minutes", price: "$140" },
-      { duration: "120 minutes", price: "$170" }
+      { duration: "120 minutes", price: "$180" }
     ],
     image: massageTherapeutic
   },
