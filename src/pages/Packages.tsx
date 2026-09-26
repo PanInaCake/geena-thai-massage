@@ -14,44 +14,51 @@ import massageTherapeutic from "@/assets/massage-therapeutic.jpg";
 import massageHotStone from "@/assets/massage-hot-stone.jpg";
 import massageHotHerbal from "@/assets/massage-hot-herbal.jpg";
 
+const sharedBodyPricing = [
+  { duration: "30 minutes", price: "$60" },
+  { duration: "45 minutes", price: "$80" },
+  { duration: "60 minutes", price: "$95" },
+];
+
 const packages = [
   {
-    title: "Thai Massage (No Oil)",
-    description: "A traditional Thai that combines stretching and acupressure techniques to help relieve muscle tension, improve flexibility, increase blood circulation, and promote deep relaxation and overall well-being.",
-    pricing: [
-      { duration: "60 minutes", price: "$95" },
-      { duration: "90 minutes", price: "$130" },
-      { duration: "120 minutes", price: "$160" }
-    ],
-    image: massageThaiNoOil
+    title: "Deep Tissue Massage",
+    description: "A relaxing deep tissue massage using warm oil to relieve muscle tension, improve circulation, and promote total body relaxation.",
+    pricing: sharedBodyPricing,
+    image: massageDeepOil
   },
   {
     title: "Thai Oil Massage",
     description: "A relaxing deep tissue massage using warm oil to relieve muscle tension, improve circulation, and promote total body relaxation.",
-    pricing: [
-      { duration: "60 minutes", price: "$95" },
-      { duration: "90 minutes", price: "$130" },
-      { duration: "120 minutes", price: "$160" }
-    ],
+    pricing: sharedBodyPricing,
     image: massageThaiOil
   },
   {
-    title: "Deep Oil Massage",
-    description: "A relaxing deep tissue massage using warm oil to relieve muscle tension, improve circulation, and promote total body relaxation.",
-    pricing: [
-      { duration: "60 minutes", price: "$95" },
-      { duration: "90 minutes", price: "$130" },
-      { duration: "120 minutes", price: "$160" }
-    ],
-    image: massageDeepOil
+    title: "Thai Massage",
+    description: "A traditional Thai that combines stretching and acupressure techniques to help relieve muscle tension, improve flexibility, increase blood circulation, and promote deep relaxation and overall well-being.",
+    pricing: sharedBodyPricing,
+    image: massageThaiNoOil
   },
   {
-    title: "Aromatherapy Massage",
+    title: "Aroma Massage",
     description: "A soothing massage using aromatic essential oils with warm oil to relax the body, reduce stress, and calm the mind.",
+    pricing: sharedBodyPricing,
+    image: massageAromatherapy
+  },
+  {
+    title: "Head Massage",
+    description: "A calming head massage designed to relieve stress, ease tension, and promote deep relaxation.",
+    pricing: sharedBodyPricing,
+    image: massageHead
+  },
+  {
+    title: "Pregnancy Massage",
+    description: "A gentle, supportive massage tailored for pregnancy to ease back and hip discomfort, reduce swelling, and promote relaxation. Please let us know your stage of pregnancy when booking.",
     pricing: [
+      { duration: "45 minutes", price: "$80" },
       { duration: "60 minutes", price: "$95" },
-      { duration: "90 minutes", price: "$130" },
-      { duration: "120 minutes", price: "$160" }
+      { duration: "90 minutes", price: "$140" },
+      { duration: "120 minutes", price: "$170" }
     ],
     image: massageAromatherapy
   },
@@ -60,26 +67,16 @@ const packages = [
     description: "A focused massage designed to relieve tension, reduce stiffness, and relax the back, neck, and shoulder muscles.",
     pricing: [
       { duration: "30 minutes", price: "$60" },
-      { duration: "45 minutes", price: "$75" },
+      { duration: "45 minutes", price: "$80" },
       { duration: "60 minutes", price: "$100" }
     ],
     image: massageNeckShoulder
   },
   {
-    title: "Head Relaxation Massage",
-    description: "A calming head massage designed to relieve stress, ease tension, and promote deep relaxation.",
-    pricing: [
-      { duration: "30 minutes", price: "$55" },
-      { duration: "45 minutes", price: "$70" },
-      { duration: "60 minutes", price: "$95" }
-    ],
-    image: massageHead
-  },
-  {
     title: "Foot Massage",
     description: "A relaxing foot massage that helps relieve tired feet, improve circulation, and promote overall relaxation.",
     pricing: [
-      { duration: "30 minutes", price: "$55" },
+      { duration: "30 minutes", price: "$60" },
       { duration: "60 minutes", price: "$100" }
     ],
     image: massageFoot
@@ -88,7 +85,7 @@ const packages = [
     title: "Foot Spa + Foot Massage",
     description: "A soothing foot treatment combining a relaxing foot spa and massage to soften the skin, relieve tired feet, and improve circulation.",
     pricing: [
-      { duration: "60 minutes", price: "$100" }
+      { duration: "60 minutes", price: "$120" }
     ],
     image: massageFootSpa
   },
@@ -96,7 +93,7 @@ const packages = [
     title: "Back Scrub + Full Body Massage",
     description: "A refreshing back scrub combined with a relaxing full body oil massage to exfoliate the skin, relieve tension, and leave you feeling renewed.",
     pricing: [
-      { duration: "90 minutes", price: "$150" }
+      { duration: "90 minutes", price: "$170" }
     ],
     image: massageBackScrub
   },
@@ -105,8 +102,8 @@ const packages = [
     description: "Treatment massage for the whole body or targeted areas, designed to relieve pain, reduce muscle tension, improve mobility, and support recovery. This therapy may include deep tissue techniques, pressure point therapy, stretching, and focused muscle work to help restore balance and promote overall wellness.",
     pricing: [
       { duration: "60 minutes", price: "$110" },
-      { duration: "90 minutes", price: "$140" },
-      { duration: "120 minutes", price: "$180" }
+      { duration: "90 minutes", price: "$150" },
+      { duration: "120 minutes", price: "$190" }
     ],
     image: massageTherapeutic
   },
@@ -114,7 +111,7 @@ const packages = [
     title: "Hot Stone Massage",
     description: "Uses warm stones combined with warm oil to help relax muscles, improve blood circulation, reduce stress, and relieve body tension. The warmth of the stones provides deep relaxation and promotes overall well-being",
     pricing: [
-      { duration: "90 minutes", price: "$145" }
+      { duration: "90 minutes", price: "$155" }
     ],
     image: massageHotStone
   },
@@ -122,7 +119,7 @@ const packages = [
     title: "Hot Herbal Massage",
     description: " Warm herbal Compress with warm oil massage helps relax muscles, relieve body tension, improve blood circulation, and promote deep relaxation. The warm herbal compress enhances comfort and refreshes both body and mind",
     pricing: [
-      { duration: "90 minutes", price: "$145" }
+      { duration: "90 minutes", price: "$155" }
     ],
     image: massageHotHerbal
   }
