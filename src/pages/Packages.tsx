@@ -18,6 +18,8 @@ const sharedBodyPricing = [
   { duration: "30 minutes", price: "$60" },
   { duration: "45 minutes", price: "$80" },
   { duration: "60 minutes", price: "$95" },
+  { duration: "90 minutes", price: "$140" },
+  { duration: "120 minutes", price: "$170" },
 ];
 
 const packages = [
@@ -52,6 +54,18 @@ const packages = [
     image: massageHead
   },
   {
+    title: "Couples Massage",
+    description: "Share a relaxing massage experience together. Two therapists work side by side so you can unwind at the same time.",
+    pricing: [
+      { duration: "30 minutes", price: "$120" },
+      { duration: "45 minutes", price: "$160" },
+      { duration: "60 minutes", price: "$190" },
+      { duration: "90 minutes", price: "$280" },
+      { duration: "120 minutes", price: "$340" }
+    ],
+    image: massageThaiOil
+  },
+  {
     title: "Pregnancy Massage",
     description: "A gentle, supportive massage tailored for pregnancy to ease back and hip discomfort, reduce swelling, and promote relaxation. Please let us know your stage of pregnancy when booking.",
     pricing: [
@@ -77,7 +91,7 @@ const packages = [
     description: "A relaxing foot massage that helps relieve tired feet, improve circulation, and promote overall relaxation.",
     pricing: [
       { duration: "30 minutes", price: "$60" },
-      { duration: "60 minutes", price: "$100" }
+      { duration: "60 minutes", price: "$95" }
     ],
     image: massageFoot
   },
@@ -111,7 +125,8 @@ const packages = [
     title: "Hot Stone Massage",
     description: "Uses warm stones combined with warm oil to help relax muscles, improve blood circulation, reduce stress, and relieve body tension. The warmth of the stones provides deep relaxation and promotes overall well-being",
     pricing: [
-      { duration: "90 minutes", price: "$155" }
+      { duration: "90 minutes", price: "$155" },
+      { duration: "120 minutes", price: "$200" }
     ],
     image: massageHotStone
   },
@@ -119,7 +134,8 @@ const packages = [
     title: "Hot Herbal Massage",
     description: " Warm herbal Compress with warm oil massage helps relax muscles, relieve body tension, improve blood circulation, and promote deep relaxation. The warm herbal compress enhances comfort and refreshes both body and mind",
     pricing: [
-      { duration: "90 minutes", price: "$155" }
+      { duration: "90 minutes", price: "$155" },
+      { duration: "120 minutes", price: "$200" }
     ],
     image: massageHotHerbal
   }
