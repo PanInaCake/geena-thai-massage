@@ -25,11 +25,11 @@ const ClosureNotice = () => {
   >
     <div className="mx-auto w-full max-w-7xl text-center">
       <h2 className="mx-auto text-center text-3xl font-black leading-tight text-red-700 md:text-5xl lg:text-6xl">
-        We will be moving to a new location on the 23rd of October.
+        We will be moving to a new location on the 23rd of October 2026.
       </h2>
 
       <p className="mx-auto mt-4 max-w-4xl text-base leading-relaxed text-gray-800 md:text-lg lg:text-xl">
-        We will be moving to a new location on the 23rd of October. We will still be open for business during this time.
+        We will be moving to a new location on the 23rd of October 2026. We will still be open for business during this time.
       </p>
     </div>
   </div>
