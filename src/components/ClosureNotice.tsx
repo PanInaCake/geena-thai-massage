@@ -1,7 +1,12 @@
+const ENABLED = false;
 const REOPEN_DATE = "2026-10-23";
 
-/** Show the closure banner through 1 August (NZ time); hide from 2 August onward. */
+/** Show the closure banner through REOPEN_DATE (NZ time). Flip ENABLED to bring it back. */
 export function shouldShowClosureNotice(date = new Date()): boolean {
+  if (!ENABLED) {
+    return false;
+  }
+
   const nzDate = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Pacific/Auckland",
     year: "numeric",
