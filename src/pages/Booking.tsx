@@ -259,7 +259,7 @@ const Booking = () => {
     }
 
     if (!isBookingDayOpen(date)) {
-      toast.error("Bookings are only available Friday through Tuesday.");
+      toast.error("Bookings are not available on the selected date.");
       return;
     }
 

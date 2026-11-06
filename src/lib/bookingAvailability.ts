@@ -18,10 +18,9 @@ const LEGACY_BOOKING_TIME_MINUTES: Record<string, number> = {
   "8pm": 20 * 60,
 };
 
-/** Open Friday through Tuesday; closed Wednesday and Thursday. */
-export function isBookingDayOpen(date: Date): boolean {
-  const day = date.getDay();
-  return day !== 3 && day !== 4;
+/** Open every day of the week, including Wednesday and Thursday. */
+export function isBookingDayOpen(_date: Date): boolean {
+  return true;
 }
 
 export type ExistingBooking = {
