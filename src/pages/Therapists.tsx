@@ -7,13 +7,13 @@ const therapists = [
     name: "Geena",
     photo: "/geena-therapist.jpg",
     imageClass: "object-cover object-top",
-    bio: "I graduated in Therapeutic Massage from the Ministry of Public Health, Thailand. I have over 25 years of experience working as a massage therapist and massage trainer in both Thailand and overseas.",
+    bio: "I graduated in Therapeutic Massage from the Ministry of Public Health, Thailand. I have over 25 years of experience working as a massage therapist and massage trainer in both Thailand and overseas. I offer full-body deep tissue massage, targeting the back, neck, shoulders, arms, legs, hands, feet, head, and often the glutes and stomach, to help relieve chronic tension, reduce pain, and improve mobility.
   },
   {
     name: "Nui",
     photo: "/nui-therapist.jpg",
-    imageClass: "object-cover object-center",
-    bio: "I completed a 120-hour Thai massage course from the Ministry of Public Health of Thailand. I have more than 20 years of massage experience in Thailand, and I have also worked as a trainer. I can care for each client the way they want, and I can make the massage a happy experience. My work is certified by that experience.",
+    imageClass: "object-cover object-top",
+    bio: "With over 20 years of massage experience in Thailand, I am a certified Thai massage practitioner with a 120-hour course qualification from the Ministry of Public Health of Thailand. Having also worked as a trainer, I bring extensive knowledge and experience to every session, tailoring each massage to suit my clients’ individual needs.",
   },
 ];
 
