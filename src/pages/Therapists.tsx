@@ -7,7 +7,7 @@ const therapists = [
     name: "Geena",
     photo: "/geena-therapist.jpg",
     imageClass: "object-cover object-top",
-    bio: "I graduated in Therapeutic Massage from the Ministry of Public Health, Thailand. I have over 25 years of experience working as a massage therapist and massage trainer in both Thailand and overseas. I offer full-body deep tissue massage, targeting the back, neck, shoulders, arms, legs, hands, feet, head, and often the glutes and stomach, to help relieve chronic tension, reduce pain, and improve mobility.
+    bio: "I graduated in Therapeutic Massage from the Ministry of Public Health, Thailand. I have over 25 years of experience working as a massage therapist and massage trainer in both Thailand and overseas. I offer full-body deep tissue massage, targeting the back, neck, shoulders, arms, legs, hands, feet, head, and often the glutes and stomach, to help relieve chronic tension, reduce pain, and improve mobility."
   },
   {
     name: "Nui",
