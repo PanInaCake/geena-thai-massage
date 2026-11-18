@@ -4,6 +4,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import aboutHero from "@/assets/about-spa.png";
 import heroLogo from "@/assets/hero-logo.png";
+import welcomeTea from "@/assets/welcome-tea.jpg";
+import flowerFootBath from "@/assets/flower-foot-bath.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -79,18 +81,32 @@ const Index = () => {
         
         <div className="container max-w-4xl">
           <div className="space-y-12 animate-fade-in">
-            <div>
-              <h2 className="text-3xl font-bold font-serif mb-4 text-center">Our Story</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Founded with a passion for authentic Thai healing traditions, Geena Thai Massage brings centuries-old therapeutic techniques to modern wellness seekers. Our skilled therapists are trained in traditional Thai massage methods, combining ancient wisdom with contemporary understanding of body mechanics and stress relief.
-              </p>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-3xl font-bold font-serif mb-4">Our Story</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Founded with a passion for authentic Thai healing traditions, Geena Thai Massage brings centuries-old therapeutic techniques to modern wellness seekers. Our skilled therapists are trained in traditional Thai massage methods, combining ancient wisdom with contemporary understanding of body mechanics and stress relief.
+                </p>
+              </div>
+              <img
+                src={welcomeTea}
+                alt="Thai tea served with fresh flowers"
+                className="w-full h-80 md:h-[28rem] object-cover rounded-lg shadow-gold"
+              />
             </div>
 
-            <div>
-              <h2 className="text-3xl font-bold font-serif mb-4 text-center">Our Philosophy</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                We believe in treating the whole person—body, mind, and spirit. Each massage session is tailored to your individual needs, whether you seek relief from physical tension, mental stress, or simply desire a moment of tranquility in your busy life. Our approach combines therapeutic benefit with deep relaxation.
-              </p>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <img
+                src={flowerFootBath}
+                alt="A wooden foot bath with fresh flowers on the deck"
+                className="order-2 w-full h-80 md:h-[28rem] object-cover rounded-lg shadow-gold md:order-1"
+              />
+              <div className="order-1 md:order-2">
+                <h2 className="text-3xl font-bold font-serif mb-4">Our Philosophy</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  We believe in treating the whole person—body, mind, and spirit. Each massage session is tailored to your individual needs, whether you seek relief from physical tension, mental stress, or simply desire a moment of tranquility in your busy life. Our approach combines therapeutic benefit with deep relaxation.
+                </p>
+              </div>
             </div>
 
             <div>
