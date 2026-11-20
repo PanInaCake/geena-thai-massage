@@ -13,7 +13,7 @@ const therapists = [
     name: "Nui",
     photo: "/nui-therapist.jpg",
     imageClass: "object-cover object-top",
-    bio: "With over 20 years of massage experience in Thailand, I am a certified Thai massage practitioner with a 120-hour course qualification from the Ministry of Public Health of Thailand. Having also worked as a trainer, I bring extensive knowledge and experience to every session, tailoring each massage to suit my clients’ individual needs.",
+    bio: "With over 20 years of massage experience in Thailand, I am a certified Thai massage practitioner with a 1200-hour course qualification from the Ministry of Public Health of Thailand. Having also worked as a trainer, I bring extensive knowledge and experience to every session, tailoring each massage to suit my clients’ individual needs.",
   },
 ];
 
