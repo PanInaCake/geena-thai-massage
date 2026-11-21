@@ -34,7 +34,7 @@ const ClosureNotice = () => {
       </h2>
 
       <p className="mx-auto mt-4 max-w-4xl text-base leading-relaxed text-gray-800 md:text-lg lg:text-xl">
-      OPEN throughout the holiday season! CLOSED ONLY ON 25 DECEMBER 2026
+      OPEN throughout the holiday season! CLOSED ONLY ON 25 DECEMBER 2026 AND 1 JANUARY 2027.
       </p>
     </div>
   </div>
