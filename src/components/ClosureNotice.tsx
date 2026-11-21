@@ -1,5 +1,5 @@
-const ENABLED = false;
-const REOPEN_DATE = "2026-10-23";
+const ENABLED = true;
+const REOPEN_DATE = "2026-12-26";
 
 /** Show the closure banner through REOPEN_DATE (NZ time). Flip ENABLED to bring it back. */
 export function shouldShowClosureNotice(date = new Date()): boolean {
@@ -30,11 +30,11 @@ const ClosureNotice = () => {
   >
     <div className="mx-auto w-full max-w-7xl text-center">
       <h2 className="mx-auto text-center text-3xl font-black leading-tight text-red-700 md:text-5xl lg:text-6xl">
-        We will be closed on the 25th of December 2026.
+        🎄 CHRISTMAS & NEW YEAR HOLIDAYS 🎄
       </h2>
 
       <p className="mx-auto mt-4 max-w-4xl text-base leading-relaxed text-gray-800 md:text-lg lg:text-xl">
-        Enjoy your holidays! We will be available every day except for the 25th of December 2026.
+      OPEN throughout the holiday season! CLOSED ONLY ON 25 DECEMBER 2026
       </p>
     </div>
   </div>
